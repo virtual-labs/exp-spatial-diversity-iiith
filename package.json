@@ -1,0 +1,23 @@
+{
+  "name": "exp-spatial-diversity-iiith",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/virtual-labs/exp-spatial-diversity-iiith.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/virtual-labs/exp-spatial-diversity-iiith/issues"
+  },
+  "homepage": "https://github.com/virtual-labs/exp-spatial-diversity-iiith#readme",
+  "dependencies": {
+    "@virtual-labs/buildexp": "^1.0.5"
+  }
+}
