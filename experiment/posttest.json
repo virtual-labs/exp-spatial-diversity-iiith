@@ -2,12 +2,12 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "This is a Sample Question 1?",
+      "question": "For $N_r$ = 3, arrange the following techniques in order.",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "MRT > SC > EGC",
+        "b": "SC >= EGC > MRT",
+        "c": "MRT >= EGC > SC",
+        "d": "EGC = MRT < SC"
       },
       "explanations": {
         "a": "Explanation 1  <a href='www.google.com'>here</a>",
@@ -19,12 +19,29 @@
       "difficulty": "beginner"
     },
     {
-      "question": "This is a Sample Question 2?",
+      "question": "What is the main purpose of beamforming in MISO and MIMO systems?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "To reduce the power consumption",
+        "b": "To direct the transmission energy towards specific users",
+        "c": "To simplify the receiver design",
+        "d": "To increase the modulation order"
+      },
+      "explanations": {
+        "a": "Explanation 1  <a href='www.google.com'>here</a>",
+        "b": "Explanation 2",
+        "c": "Explanation 2",
+        "d": "Explanation 2"
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+     {
+      "question": "Given that the average SNR for each branch in a selection combining system is 10 dB and there are 3 antennas at the receiver, calculate the average combined SNR",
+      "answers": {
+        "a": "10",
+        "b": "16.02",
+        "c": "18.33",
+        "d": "13.73"
       },
       "explanations": {
         "a": "Explanation 1  <a href='www.google.com'>here</a>",
