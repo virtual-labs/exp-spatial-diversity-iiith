@@ -2,12 +2,12 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "This is a Sample Question 1?",
+      "question": "Which of the following best describes spatial diversity in wireless communications?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "Using different time slots to send the same signal",
+        "b": "Using different frequency bands to transmit data",
+        "c": "Using multiple antennas at different locations to transmit and receive signals",
+        "d": "Using encryption techniques to secure the communication"
       },
       "explanations": {
         "a": "Explanation 1  <a href='www.google.com'>here</a>",
@@ -19,13 +19,13 @@
       "difficulty": "beginner"
     },
     {
-      "question": "This is a Sample Question 2?",
+      "question": "What according to you is the primary advantage of using Multiple transmitter/receiver systems?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
-      },
+        "a": "Increased battery life",
+        "b": "Higher data rates and improved spectral efficiency",
+        "c": "Simplified receiver design",
+        "d": "Reduced hardware costs"
+      }, 
       "explanations": {
         "a": "Explanation 1  <a href='www.google.com'>here</a>",
         "b": "Explanation 2",
