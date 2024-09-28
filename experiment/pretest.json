@@ -10,12 +10,12 @@
         "d": "Using encryption techniques to secure the communication"
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "The correct answer is C. Spatial diversity is the use of multiple antennas at different locations to transmit and receive signals. This technique is used to improve the reliability of wireless communication systems by reducing the effects of fading and interference.",
+        "b": "The correct answer is C. Spatial diversity is the use of multiple antennas at different locations to transmit and receive signals. This technique is used to improve the reliability of wireless communication systems by reducing the effects of fading and interference.",
+        "c": "Yess, this is correct.",
+        "d": "The correct answer is C. Spatial diversity is the use of multiple antennas at different locations to transmit and receive signals. This technique is used to improve the reliability of wireless communication systems by reducing the effects of fading and interference."
       },
-      "correctAnswer": "a",
+      "correctAnswer": "c",
       "difficulty": "beginner"
     },
     {
@@ -27,12 +27,12 @@
         "d": "Reduced hardware costs"
       }, 
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "The correct answer is B. Multiple transmitter/receiver systems can provide higher data rates and improved spectral efficiency by using spatial diversity techniques to reduce the effects of fading and interference.",
+        "b": "Yes, this is the correct answer.",
+        "c": "The correct answer is B. Multiple transmitter/receiver systems can provide higher data rates and improved spectral efficiency by using spatial diversity techniques to reduce the effects of fading and interference.",
+        "d": "The correct answer is B. Multiple transmitter/receiver systems can provide higher data rates and improved spectral efficiency by using spatial diversity techniques to reduce the effects of fading and interference."
       },
-      "correctAnswer": "c",
+      "correctAnswer": "b",
       "difficulty": "beginner"
     }
   ]
