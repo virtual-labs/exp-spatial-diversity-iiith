@@ -2,37 +2,37 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "This is a Sample Question 1?",
+      "question": "Which of the following best describes spatial diversity in wireless communications?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
+        "a": "Using different time slots to send the same signal",
+        "b": "Using different frequency bands to transmit data",
+        "c": "Using multiple antennas at different locations to transmit and receive signals",
+        "d": "Using encryption techniques to secure the communication"
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "The correct answer is C. Spatial diversity is the use of multiple antennas at different locations to transmit and receive signals. This technique is used to improve the reliability of wireless communication systems by reducing the effects of fading and interference.",
+        "b": "The correct answer is C. Spatial diversity is the use of multiple antennas at different locations to transmit and receive signals. This technique is used to improve the reliability of wireless communication systems by reducing the effects of fading and interference.",
+        "c": "Yess, this is correct.",
+        "d": "The correct answer is C. Spatial diversity is the use of multiple antennas at different locations to transmit and receive signals. This technique is used to improve the reliability of wireless communication systems by reducing the effects of fading and interference."
       },
-      "correctAnswer": "a",
+      "correctAnswer": "c",
       "difficulty": "beginner"
     },
     {
-      "question": "This is a Sample Question 2?",
+      "question": "What according to you is the primary advantage of using Multiple transmitter/receiver systems?",
       "answers": {
-        "a": "answer1",
-        "b": "answer2",
-        "c": "answer3",
-        "d": "answer4"
-      },
+        "a": "Increased battery life",
+        "b": "Higher data rates and improved spectral efficiency",
+        "c": "Simplified receiver design",
+        "d": "Reduced hardware costs"
+      }, 
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "The correct answer is B. Multiple transmitter/receiver systems can provide higher data rates and improved spectral efficiency by using spatial diversity techniques to reduce the effects of fading and interference.",
+        "b": "Yes, this is the correct answer.",
+        "c": "The correct answer is B. Multiple transmitter/receiver systems can provide higher data rates and improved spectral efficiency by using spatial diversity techniques to reduce the effects of fading and interference.",
+        "d": "The correct answer is B. Multiple transmitter/receiver systems can provide higher data rates and improved spectral efficiency by using spatial diversity techniques to reduce the effects of fading and interference."
       },
-      "correctAnswer": "c",
+      "correctAnswer": "b",
       "difficulty": "beginner"
     }
   ]
