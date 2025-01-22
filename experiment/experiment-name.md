@@ -1,1 +1,1 @@
-# SPATIAL DIVERSITY
+# Spatial Diversity
