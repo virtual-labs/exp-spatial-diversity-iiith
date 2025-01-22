@@ -10,10 +10,10 @@
         "d": "EGC = MRT < SC"
       },
       "explanations": {
-        "a": "The correct answer is C. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC).",
-        "b": "The correct answer is C. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC).",
-        "c": "Yes, this is the correct answer.",
-        "d": "The correct answer is C. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC)."
+        "a": "Please try again.. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC).",
+        "b": "Please try again.. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC).",
+        "c": "Correct!",
+        "d": "Please try again.. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC)."
       },
       "correctAnswer": "c",
       "difficulty": "beginner"
@@ -27,10 +27,10 @@
         "d": "To increase the modulation order"
       },
       "explanations": {
-        "a": "The correct answer is B. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users.",
-        "b": "Yes, this is the correct answer.",
-        "c": "The correct answer is B. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users.",
-        "d": "The correct answer is B. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users."
+        "a": "Please try again.. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users.",
+        "b": "Correct!",
+        "c": "Please try again.. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users.",
+        "d": "Please try again.. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users."
       },
       "correctAnswer": "b",
       "difficulty": "beginner"
@@ -44,10 +44,10 @@
         "d": "13.73"
       },
       "explanations": {
-        "a": "The correct answer is C. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33.",
-        "b": "The correct answer is C. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33.",
-        "c": "Yes, this is the correct answer.",
-        "d": "The correct answer is C. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33."
+        "a": "Please try again.. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33.",
+        "b": "Please try again.. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33.",
+        "c": "Correct!",
+        "d": "Please try again.. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33."
       },
       "correctAnswer": "c",
       "difficulty": "beginner"
