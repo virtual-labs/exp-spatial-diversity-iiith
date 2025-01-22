@@ -1,4 +1,3 @@
-# AIM
 This experiment provides basic understanding of the spatial diversity of wireless channel via following objectives:
 1) To study the working principle of spatial diversity
    
