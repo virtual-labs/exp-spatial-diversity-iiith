@@ -37,7 +37,7 @@ class AntennaSystem {
             .attr('id', 'transmitter')
             .attr('viewBox', '0 0 100 100')
             .append('image')
-            .attr('href', './images/antenna-svgrepo-com.svg')
+            .attr('href', './images/antenna-small.svg')
             .attr('width', '100')
             .attr('height', '100');
 
