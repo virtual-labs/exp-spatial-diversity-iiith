@@ -970,8 +970,7 @@ th {
     border: 2px solid #98CB3B;
     border-radius: 10px;
     padding: 20px;
-    width: 100px;
-
+    width: 200px;
 }
 
 .center-column {
@@ -980,7 +979,7 @@ th {
     border: 2px solid #000000;
     border-radius: 10px;
     padding: 20px;
-    width:900px;
+    width: 1300px;
 }
 
 .right-column {
@@ -990,7 +989,7 @@ th {
     border: 2px solid #98CB3B;
     border-radius: 10px;
     padding: 20px;
-    width: 1000px;
+    width: 200px;
     height: 600px;
 }
 :root {
