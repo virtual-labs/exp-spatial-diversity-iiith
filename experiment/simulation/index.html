@@ -2,6 +2,115 @@
 <html lang="en">
 
 <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spatial Diversity Simulation</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/css/style.min.css">
+</head>
+
+<body>
+    <div class="columns is-centered">
+        <div class="column is-one-quarter v-instruction-title">
+            Tasks
+        </div>
+        <div class="column">
+            <div class="tab">
+                <button class="tablinks" onclick="openPart(event, 'simo')" id="default">SIMO AND MISO</button>
+            </div>
+        </div>
+    </div>		
+		<div id="simo" class="tabcontent">
+			<section class="fre" id="SIMO">
+				<div class="max-width">
+					<h2 class="title">SIMO and MISO</h2>
+					<div class="columns is-centered">
+						<div class="v-collapsible-instruction-container v-instruction-container" style="margin-top: 2%;">
+							<div class="v-collapsible is-size-5">Instructions</div>
+							<div class="v-content" style="text-align: left; padding-left: 10%; padding-right: 10%;">
+								<h3><b>To understand the different combining techniques in SIMO, follow these steps:</b></h3>
+								<br>
+								<h3>
+									<ol>
+										<li>Enter the value for number of receive antennas(1-10)</li>
+										<li>Enter the value of Noise Variance (N0)</li>
+										<li>Select the combining technique you want to use</li>
+										<li>Click on the calculate button to get the desired outputs in the Observations.</li>
+										<li>Please refresh the page to restart the experiment</li>
+									</ol>
+								</h3>
+								<br>
+							</div>
+						</div>
+					</div>
+
+					<div class="columns-container">
+						<div class="left-column box">
+							<div class="columns is-centered is-flex-direction-row is-flex-wrap-wrap is-align-content-start" style="margin-top:-1.5%">
+								<div class="column is-2-desktop is-4-tablet is-10-mobile">
+									<div id="error-message"></div>
+								
+						
+										<form id="system-form">
+											<div class="form-group">
+												<label for="system-type">System Type:</label>
+												<select id="system-type" name="system_type" required>
+													<option value="SIMO">SIMO</option>
+													<option value="MISO">MISO</option>
+												</select>
+											</div>
+
+											<div class="form-group">
+												<label for="num-antennas">Number of Antennas:</label>
+												<input type="number" id="num-antennas" name="num_antennas" min="1" max="10" value="2" required>
+											</div>
+
+											<div class="form-group" id="combining-method-container">
+												<label for="combining-method">Combining Method:</label>
+												<select id="combining-method" name="combining_method" class="form-select" style="padding: 0.5rem;" required>
+													<option value="EGC">Equal Gain Combining (EGC)</option>
+													<option value="SC">Selection Combining (SC)</option>
+													<option value="MRC">Maximal Ratio Combining (MRC)</option>
+												</select>
+											</div>
+
+											<div class="form-group">
+												<button type="button" id="generate-diagram" style="margin-top: 1.55rem ;border-radius:5px ;">Generate Diagram</button>
+												<button type="button" id="apply-diversity" style="margin-top: 1.55rem; border-radius:5px;display: none;">Apply Diversity</button>
+												<button type="button" id="reset-experiment" style="margin-top: 1.55rem;border-radius:5px; display: none;">Reset</button>
+											</div>
+										</form>
+									</div>
+								
+							</div>
+						</div>
+						<hr><hr>
+						<div class="center-column box">
+							<h3><b>Simulation Area</b></h3>
+							<div id="diagram-container">
+								<svg id="diagram" viewBox="0 0 800 600"></svg>
+							</div>
+						</div>
+						<div class="right-column box">
+							<div class="box-question">
+								<h3><b>Output</b></h3>
+								<div id="table-container"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html><!DOCTYPE html>
+<html lang="en">
+
+<head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="css/main.css">
