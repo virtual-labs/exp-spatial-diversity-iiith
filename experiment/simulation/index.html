@@ -18,6 +18,7 @@
         <div class="column">
             <div class="tab">
                 <button class="tablinks" onclick="openPart(event, 'simo')" id="default">SIMO AND MISO</button>
+				                <!-- <button class="tablinks" onclick="openPart(event, 'simo')" id="default">SIMO AND MISO</button> -->
             </div>
         </div>
     </div>		
@@ -45,14 +46,16 @@
 						</div>
 					</div>
 
-					<div class="columns-container">
-						<div class="left-column box">
+					<div class="columns-container" style="display: flex; flex-wrap: wrap;">
+						<div class="left-column box" style="flex: 1 1 25%;">
 							<div class="columns is-centered is-flex-direction-row is-flex-wrap-wrap is-align-content-start" style="margin-top:-1.5%">
 								<div class="column is-2-desktop is-4-tablet is-10-mobile">
+									
 									<div id="error-message"></div>
 								
 						
 										<form id="system-form">
+											<div class="box-question">
 											<div class="form-group">
 												<label for="system-type">System Type:</label>
 												<select id="system-type" name="system_type" required>
@@ -82,20 +85,24 @@
 											</div>
 										</form>
 									</div>
-								
+								</div>
 							</div>
 						</div>
-						<hr><hr>
-						<div class="center-column box">
+						<hr><hr><hr>
+						<div class="center-column box" style="flex: 2 2 40%;">
+							<!-- <div class="column is-2-desktop is-4-tablet is-10-mobile"> -->
 							<h3><b>Simulation Area</b></h3>
 							<div id="diagram-container">
 								<svg id="diagram" viewBox="0 0 800 600"></svg>
-							</div>
+							<!-- </div> -->
 						</div>
-						<div class="right-column box">
+						</div>
+						<div class="right-column box" style="flex: 1 1 30%;">
+							<div class="column is-2-desktop is-4-tablet is-10-mobile"></div>
 							<div class="box-question">
 								<h3><b>Output</b></h3>
 								<div id="table-container"></div>
+							</div>
 							</div>
 						</div>
 					</div>
