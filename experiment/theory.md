@@ -51,7 +51,7 @@ The average combined SNR of the array for this technique is given as
 
 $$
 \begin{aligned}
-\bar{\gamma}_c = \sum_{i=1}^{N_r} \frac{\Bar{\gamma}_i}{i}.
+\bar{\gamma}_c = \sum \frac{\bar{\gamma}_i}{i}
 \end{aligned}
 $$
 
@@ -74,7 +74,7 @@ The received signal in MRC is given by
 
 $$
 \begin{aligned}
-{y} = \mathbf{w}^T\mathbf{h}x,\nonumber=\left(\mathbf{w}_1\mathbf{h}_1 + \mathbf{w}_2\mathbf{h}_2 + \ldots+\mathbf{w}_{N_r}\mathbf{h}_{N_r}\right){x}.\nonumber
+y = \mathbf{w}^T\mathbf{h}x
 \end{aligned}
 $$
 
@@ -90,7 +90,13 @@ The instantaneous combined SNR for this technique is given as
 
 $$
 \begin{aligned}
-\gamma_c = \frac{1}{N_0}\sum_{i=1}^{N_r} |\mathbf{h}_i|^2=\sum_{i=1}^{N_r}\gamma_i,
+\gamma_c = \frac{1}{N_0} \sum \| \mathbf{h}_i \|^2
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+\gamma_c = \sum \gamma_i
 \end{aligned}
 $$
 
@@ -120,7 +126,7 @@ The received signal with EGC is given by
 
 $$
 \begin{aligned}
-\mathbf{y} = \left(\mathbf{h}_1 + \mathbf{h}_2 + \ldots+\mathbf{h}_{N_r}\right)w\mathbf{x}.\nonumber
+\mathbf{y} = \left(\mathbf{h}_1 + \mathbf{h}_2 + ...+\mathbf{h}_{N_r}\right)w\mathbf{x}.
 \end{aligned}
 $$
 
