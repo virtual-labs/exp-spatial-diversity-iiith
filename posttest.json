@@ -1,0 +1,56 @@
+{
+  "version": 2.0,
+  "questions": [
+    {
+      "question": "For $N_r$ = 3, arrange the following techniques in order.",
+      "answers": {
+        "a": "MRT > SC > EGC",
+        "b": "SC >= EGC > MRT",
+        "c": "MRT >= EGC > SC",
+        "d": "EGC = MRT < SC"
+      },
+      "explanations": {
+        "a": "Please try again.. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC).",
+        "b": "Please try again.. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC).",
+        "c": "Correct!",
+        "d": "Please try again.. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC)."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What is the main purpose of beamforming in MISO and MIMO systems?",
+      "answers": {
+        "a": "To reduce the power consumption",
+        "b": "To direct the transmission energy towards specific users",
+        "c": "To simplify the receiver design",
+        "d": "To increase the modulation order"
+      },
+      "explanations": {
+        "a": "Please try again.. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users.",
+        "b": "Correct!",
+        "c": "Please try again.. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users.",
+        "d": "Please try again.. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+     {
+      "question": "Given that the average SNR for each branch in a selection combining system is 10 dB and there are 3 antennas at the receiver, calculate the average combined SNR (in dB)",
+      "answers": {
+        "a": "10",
+        "b": "16.02",
+        "c": "18.33",
+        "d": "13.73"
+      },
+      "explanations": {
+        "a": "Please try again.. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33.",
+        "b": "Please try again.. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33.",
+        "c": "Correct!",
+        "d": "Please try again.. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33."
+      },
+      "correctAnswer": "c",
+      "difficulty": "beginner"
+    }
+  ]
+}
