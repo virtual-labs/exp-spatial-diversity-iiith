@@ -11,17 +11,7 @@
 </head>
 
 <body>
-    <div class="columns is-centered">
-        <div class="column is-one-quarter v-instruction-title">
-            Tasks
-        </div>
-        <div class="column">
-            <div class="tab">
-                <button class="tablinks" onclick="openPart(event, 'simo')" id="default">SIMO AND MISO</button>
-            </div>
-        </div>
-    </div>		
-		<div id="simo" class="tabcontent">
+
 			<section class="fre" id="SIMO">
 				<div class="max-width">
 					<h2 class="title">SIMO and MISO</h2>
@@ -48,44 +38,43 @@
 					<div class="columns-container">
 						<div class="left-column box">
 							<div class="columns is-centered is-flex-direction-row is-flex-wrap-wrap is-align-content-start" style="margin-top:-1.5%">
-								<div class="column is-2-desktop is-4-tablet is-10-mobile">
-									<div id="error-message"></div>
-								
+							
+									<div id="error-message" class="alert alert-danger" style="display: none;"></div>
+									
+									<form id="system-form" class="p-3">
+										<div class="form-group mb-3">
+											<label for="system-type" class="form-label fw-bold">System Type:</label>
+											<select id="system-type" name="system_type" class="form-select form-select-sm" required>
+												<option value="SIMO">SIMO</option>
+												<option value="MISO">MISO</option>
+											</select>
+										</div>
+
+										<div class="form-group mb-3">
+											<label for="num-antennas" class="form-label fw-bold">Number of Antennas:</label>
+											<input type="number" id="num-antennas" name="num_antennas" min="1" max="10" value="2" 
+												class="form-control form-control-sm" required>
+										</div>
+
+										<div class="form-group mb-3" id="combining-method-container">
+											<label for="combining-method" class="form-label fw-bold">Combining Method:</label>
+											<select id="combining-method" name="combining_method" class="form-select form-select-sm" required>
+												<option value="EGC">Equal Gain Combining (EGC)</option>
+												<option value="SC">Selection Combining (SC)</option>
+												<option value="MRC">Maximal Ratio Combining (MRC)</option>
+											</select>
+										</div>
+
+										<div class="form-group d-grid gap-2">
+											<button type="button" id="generate-diagram" class="btn btn-primary">Generate Diagram</button>
+											<button type="button" id="apply-diversity" class="btn btn-success" style="display: none;">Apply Diversity</button>
+											<button type="button" id="reset-experiment" class="btn btn-secondary" style="display: none;">Reset</button>
+										</div>
+									</form>
+								</div>
 						
-										<form id="system-form">
-											<div class="form-group">
-												<label for="system-type">System Type:</label>
-												<select id="system-type" name="system_type" required>
-													<option value="SIMO">SIMO</option>
-													<option value="MISO">MISO</option>
-												</select>
-											</div>
-
-											<div class="form-group">
-												<label for="num-antennas">Number of Antennas:</label>
-												<input type="number" id="num-antennas" name="num_antennas" min="1" max="10" value="2" required>
-											</div>
-
-											<div class="form-group" id="combining-method-container">
-												<label for="combining-method">Combining Method:</label>
-												<select id="combining-method" name="combining_method" class="form-select" style="padding: 0.5rem;" required>
-													<option value="EGC">Equal Gain Combining (EGC)</option>
-													<option value="SC">Selection Combining (SC)</option>
-													<option value="MRC">Maximal Ratio Combining (MRC)</option>
-												</select>
-											</div>
-
-											<div class="form-group">
-												<button type="button" id="generate-diagram" style="margin-top: 1.55rem ;border-radius:5px ;">Generate Diagram</button>
-												<button type="button" id="apply-diversity" style="margin-top: 1.55rem; border-radius:5px;display: none;">Apply Diversity</button>
-												<button type="button" id="reset-experiment" style="margin-top: 1.55rem;border-radius:5px; display: none;">Reset</button>
-											</div>
-										</form>
-									</div>
-								
-							</div>
 						</div>
-						<hr><hr>
+					
 						<div class="center-column box">
 							<h3><b>Simulation Area</b></h3>
 							<div id="diagram-container">
@@ -101,7 +90,7 @@
 					</div>
 				</div>
 			</section>
-		</div>
+	
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
     <script src="js/main.js"></script>
