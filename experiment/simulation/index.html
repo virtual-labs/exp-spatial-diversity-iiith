@@ -11,107 +11,227 @@
 </head>
 
 <body>
-    <div class="columns is-centered">
+
+	<div class="columns is-centered">
         <div class="column is-one-quarter v-instruction-title">
             Tasks
         </div>
         <div class="column">
             <div class="tab">
-                <button class="tablinks" onclick="openPart(event, 'simo')" id="default">SIMO AND MISO</button>
-				                <!-- <button class="tablinks" onclick="openPart(event, 'simo')" id="default">SIMO AND MISO</button> -->
+                <button class="tablinks" onclick="openPart(event, 'simo')", id="default">SIMO</button>
+                <button class="tablinks" onclick="openPart(event, 'miso')">MISO</button>
             </div>
         </div>
-    </div>		
-		<div id="simo" class="tabcontent">
-			<section class="fre" id="SIMO">
-				<div class="max-width">
-					<h2 class="title">SIMO and MISO</h2>
-					<div class="columns is-centered">
-						<div class="v-collapsible-instruction-container v-instruction-container" style="margin-top: 2%;">
-							<div class="v-collapsible is-size-5">Instructions</div>
-							<div class="v-content" style="text-align: left; padding-left: 10%; padding-right: 10%;">
-								<h3><b>To understand Spatial diversity, please follow the following steps:</b></h3>
-								<br>
-								<h3>
-									<ol>
-										<li> Select the diversity type: SIMO or MISO</li>
-										<li>Enter the number of antennas you want for diversity and click on generate diagram. Observe the channel coefficients.</li>
-										<li> Select the combining technique: EGC/MRT/SC and click on apply diversity.</li>
-										<li>Observe the weights at each transmitter/reciever to see how the signal is combined.</li>
-			
-									</ol>
-								</h3>
-								<br>
-							</div>
+    </div>
+
+	<div id="simo" class="tabcontent">
+		<section class="fre" id="SIMO">
+			<div class="max-width">
+				<h2 class="title">Single Input Multiple Output</h2>
+				<div class="columns is-centered">
+					<div class="v-collapsible-instruction-container v-instruction-container" style="margin-top: 2%;">
+						<div class="v-collapsible is-size-5">Instructions</div>
+						<div class="v-content" style="text-align: left; padding-left: 10%; padding-right: 10%;">
+							<h3> <b> To understand the different combining techniques in SIMO, follow these steps:  </b> </h3>
+							<br>
+							<h3>
+								<ol> 
+									<li> Enter the value for number of receive antennas (Nr) </li> 
+									<li> Enter the value of Noise Variance (N0)</li> 
+									<li> To obtain the channel realisation, click on "Get Channel"</li>
+									<li> Select the combining technique you want to use</li>
+									<li> Enter the value for SNR Threshold</li>
+									<li> Click on the calcularte button to get the desired outputs in the Observations.</li>
+								</ol>
+							</h3>
+							<br>
 						</div>
 					</div>
+				</div>
 
-					<div class="columns-container" style="display: flex; flex-wrap: wrap;">
-						<div class="left-column box" style="flex: 1 1 25%;">
-							<div class="columns is-centered is-flex-direction-row is-flex-wrap-wrap is-align-content-start" style="margin-top:-1.5%">
-								<div class="column is-2-desktop is-4-tablet is-10-mobile">
-									
-									<div id="error-message"></div>
-								
-						
-										<form id="system-form">
-											<div class="box-question">
-											<div class="form-group">
-												<label for="system-type">System Type:</label>
-												<select id="system-type" name="system_type" required>
-													<option value="SIMO">SIMO</option>
-													<option value="MISO">MISO</option>
-												</select>
-											</div>
 
-											<div class="form-group">
-												<label for="num-antennas">Number of Antennas:</label>
-												<input type="number" id="num-antennas" name="num_antennas" min="1" max="10" value="2" required>
-											</div>
-
-											<div class="form-group" id="combining-method-container">
-												<label for="combining-method">Combining Method:</label>
-												<select id="combining-method" name="combining_method" class="form-select" style="padding: 0.5rem;" required>
-													<option value="EGC">Equal Gain Combining (EGC)</option>
-													<option value="SC">Selection Combining (SC)</option>
-													<option value="MRC">Maximal Ratio Combining (MRC)</option>
-												</select>
-											</div>
-
-											<div class="form-group">
-												<button type="button" id="generate-diagram" style="margin-top: 1.55rem ;border-radius:5px ;">Generate Diagram</button>
-												<button type="button" id="apply-diversity" style="margin-top: 1.55rem; border-radius:5px;display: none;">Apply Diversity</button>
-												<button type="button" id="reset-experiment" style="margin-top: 1.55rem;border-radius:5px; display: none;">Reset</button>
-											</div>
-										</form>
+				<div class="columns-container">
+					<div class="left-column box">
+						<div class="columns is-centered is-flex-direction-row is-flex-wrap-wrap is-align-content-start" style="margin-top:-1.5%">
+							<div class="column is-2-desktop is-4-tablet is-10-mobile">
+								<div class="box-question">
+									<div class="fill1">
+										Nr <input type="number" id="Nr">
 									</div>
+									<div class="fill1">
+										N0 <input type="number" id="var" step="0.1">
+									</div>
+									<button class="buttonTotal" id="getChannelButton" role="button" onClick="getChannel()">Get Channel</button>
+									
+									<!-- Radio buttons and threshold input (initially hidden) -->
+									<div id="optionsContainer" style="display: none;">
+										<div class="fill1 radio-container">
+											<div class="form">
+												<input type="radio" id="sc" name="combining-type" value="sc">
+												<label for="sc">SC</label>
+											</div>
+											<div class="form">
+												<input type="radio" id="mrc" name="combining-type" value="mrc">
+												<label for="mrc">MRC</label>
+											</div>
+											<div class="form">
+												<input type="radio" id="egc" name="combining-type" value="egc">
+												<label for="egc">EGC</label>
+											</div>
+			
+										</div>
+										<div class="fill1">
+											Threshold <input type="number" id="threshold" step="0.1">
+										</div>						
+										<button class="buttonTotal" id="calculateButton" role="button" onClick="calculate()">Calculate</button>
+									</div>
+									
 								</div>
 							</div>
 						</div>
-						<hr><hr><hr>
-						<div class="center-column box" style="flex: 2 2 40%;">
-							<!-- <div class="column is-2-desktop is-4-tablet is-10-mobile"> -->
-							<h3><b>Simulation Area</b></h3>
-							<div id="diagram-container">
-								<svg id="diagram" viewBox="0 0 800 600"></svg>
-							<!-- </div> -->
-						</div>
-						</div>
-						<div class="right-column box" style="flex: 1 1 30%;">
-							<div class="column is-2-desktop is-4-tablet is-10-mobile"></div>
-							<div class="box-question">
-								<h3><b>Output</b></h3>
-								<div id="table-container"></div>
+					</div>
+						<div class="center-column box">
+						<div class="column is-7-desktop is-10-tablet is-10-mobile" >
+							<div id="matrixContainer" class="matrix-container" style="display: none;">
+								<div class="matrix-wrapper">
+									<table id="matrixTable" class="matrix"></table> <!-- Matrix table -->
+								</div>
 							</div>
+							<img id="imageDisplay" src="./images/Exp5.png" alt="Image">
+						</div>
+					</div>
+						<div class="right-column box">
+						<div class="column is-3-desktop is-10-tablet is-5-mobile">
+							<div class="box-question">
+								<div class="v-datalist-title">Observations</div>
+								<div id="observations1">
+								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</section>
-		</div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
-    <script src="js/main.js"></script>
+
+
+			</div>
+
+		</section>
+	</div>
+
+
+
+
+	<div id="miso" class="tabcontent">
+		<section class="fre" id="MISO">
+			<div class="max-width">
+				<h2 class="title">Multiple Input Single Output</h2>
+				<div class="columns is-centered">
+					<div class="v-collapsible-instruction-container v-instruction-container" style="margin-top: 2%;">
+						<div class="v-collapsible is-size-5">Instructions</div>
+						<div class="v-content" style="text-align: left; padding-left: 10%; padding-right: 10%;">
+							<h3> <b> To understand the different combining techniques in MISO, follow these steps: </b> </h3>
+							<br>
+							<h3>
+								<ol> 
+									<li> Enter the value for number of receive antennas (Nr) </li> 
+									<li> Enter the value of Noise Variance (N0)</li> 
+									<li> To obtain the channel realisation, click on "Get Channel"</li>
+									<li> Select the combining technique you want to use</li>
+									<li> Enter the value for SNR Threshold</li>
+									<li> Click on the calcularte button to get the desired outputs in the Observations.</li>
+								</ol>
+							</h3>
+							<br>
+						</div>
+					</div>
+				</div>
+			
+					<div class="columns-container">
+						<div class="left-column box">
+							<div class="columns is-centered is-flex-direction-row is-flex-wrap-wrap is-align-content-start"
+							style="margin-top:-1.5%">
+								<div class="column is-2-desktop is-4-tablet is-10-mobile">
+									<div class="box-question">
+										<div class="fill1">
+											Nr <input type="number" id="NrMiso">
+										</div>
+										<div class="fill1">
+											N0 <input type="number" id="varMiso" step="0.1">
+										</div>
+										<button class="buttonTotal" id="getChannelButtonMiso" role="button" onClick="getChannelMiso()">Get Channel</button>
+										
+										<!-- Radio buttons and threshold input (initially hidden) -->
+										<div id="optionsContainerMiso" style="display: none;">
+											<div class="fill1 radio-container">
+												<div class="form">
+													<input type="radio" id="scMiso" name="combining-typeMiso" value="sc">
+													<label for="sc">SC</label>
+												</div>
+												<div class="form">
+													<input type="radio" id="mrcMiso" name="combining-typeMiso" value="mrc">
+													<label for="mrc">MRC</label>
+												</div>
+												<div class="form">
+													<input type="radio" id="egcMiso" name="combining-typeMiso" value="egc">
+													<label for="egc">EGC</label>
+												</div>
+					
+											</div>
+											<div class="fill1">
+												Threshold <input type="number" id="thresholdMiso" step="0.1">
+											</div>						
+											<button class="buttonTotal" id="calculateButtonMiso" role="button" onClick="calculateMiso()">Calculate</button>
+										</div>
+										
+									</div>
+								</div>
+							</div>	
+						</div>
+
+						<div class="center-column box">
+							<div class="column is-7-desktop is-10-tablet is-10-mobile" >
+								<div id="matrixContainerMiso" class="matrix-container" style="display: none;">
+									<div class="matrix-wrapper">
+										<table id="matrixTableMiso" class="matrix"></table> <!-- Matrix table -->
+									</div>
+								</div>
+								<img id="imageDisplayMiso" src="./images/MISO.png" alt="Image">
+							</div>
+						</div>
+
+						<div class="right-column box">
+							<div class="column is-3-desktop is-10-tablet is-5-mobile">
+								<div class="box-question">
+									<div class="v-datalist-title">Observations</div>
+									<div id="observations1Miso">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+
+
+
+
+
+
+		
+					<script src="js/jsplumb.bundle.js"></script>
+					<script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
+					<script type="module" src="js/main.js"></script>
+
+				</div>
+			</div>
+
+		</section>
+	</div>
+
+
+
+
+
+	<script src="./js/main.js"></script>
+	<script src="https://cdn.jsdelivr.net/gh/virtual-labs/virtual-style@0.0.8-b/js/script.js"></script>
+
 </body>
 
 </html>

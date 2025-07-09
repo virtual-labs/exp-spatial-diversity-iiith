@@ -331,15 +331,13 @@ html {
     transform: scale(1.05);
 }
 
-/* ---------------------------------------------------- Tabs -------------------------------------------- */
-
+/* Tab Styles */
 .tab {
     overflow: hidden;
     border: 1px solid #FFFFFF;
     background-color: #FFFFFF;
 }
 
-/* Style the buttons inside the tab */
 .tab button {
     background-color: inherit;
     border: none;
@@ -349,12 +347,10 @@ html {
     font-size: 17px;
 }
 
-/* Change background color of buttons on hover */
 .tab button:hover {
     background-color: #ddd;
 }
 
-/* Create an active/current tablink class */
 .tab button.active {
     background-color: #ccc;
     border-style: solid;
@@ -363,7 +359,6 @@ html {
     color: #176696;
 }
 
-/* Style the tab content */
 .tabcontent {
     display: none;
     padding: 6px 12px;
@@ -384,8 +379,12 @@ th {
     background-color: #AAA;
 }
 
-/* ------------------------------------------- Image ----------------------------------- */
+th {
+    background-color: palevioletred;
+    font-weight: 500;
+}
 
+/* Image Styles */
 .expandable-figure {
     max-width: 100%;
     cursor: pointer;
