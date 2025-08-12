@@ -82,7 +82,7 @@ $$
 ## Maximal-Ratio Combining
 Maximal Ratio Combining allocates weights to each received signal based on the strength of the corresponding channel coefficient in $\mathbf{h}$. $\mathbf{w}_i$'s assigned to each signal is proportional to its channel gain, aiming to maximize the signal power.
 
-<p center="align">
+<p align="center">
 <img src="./images/exp5_3.png">
 </p>
 
