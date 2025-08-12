@@ -2,38 +2,140 @@
   "version": 2.0,
   "questions": [
     {
+      "question": "What, according to you, is the primary advantage of using multiple antennas at the transmitter/receiver?",
+      "answers": {
+        "a": "Increased battery life",
+        "b": "Improved received signal reliability",
+        "c": "Simplified receiver design",
+        "d": "Reduced hardware costs"
+      },
+      "explanations": {
+        "a": "Incorrect. Multiple antennas do not inherently increase battery life; they may even increase power use.",
+        "b": "Correct! Multiple antennas improve reliability by mitigating fading through spatial diversity and beamforming.",
+        "c": "Incorrect. Multiple antennas generally make the receiver more complex.",
+        "d": "Incorrect. Multiple antennas usually increase hardware costs, not reduce them."
+      },
+      "correctAnswer": "b",
+      "difficulty": "beginner"
+    },
+    {
       "question": "Which of the following best describes spatial diversity in wireless communications?",
       "answers": {
         "a": "Using different time slots to send the same signal",
         "b": "Using different frequency bands to transmit data",
-        "c": "Using multiple antennas at different locations to transmit and receive signals",
+        "c": "Using multiple antennas sufficiently spaced to transmit/receive signals",
         "d": "Using encryption techniques to secure the communication"
       },
       "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
-      },
-      "correctAnswer": "a",
-      "difficulty": "beginner"
-    },
-    {
-      "question": "What according to you is the primary advantage of using Multiple transmitter/receiver systems?",
-      "answers": {
-        "a": "Increased battery life",
-        "b": "Higher data rates and improved spectral efficiency",
-        "c": "Simplified receiver design",
-        "d": "Reduced hardware costs"
-      }, 
-      "explanations": {
-        "a": "Explanation 1  <a href='www.google.com'>here</a>",
-        "b": "Explanation 2",
-        "c": "Explanation 2",
-        "d": "Explanation 2"
+        "a": "Incorrect. This is time diversity, not spatial diversity.",
+        "b": "Incorrect. This is frequency diversity, not spatial diversity.",
+        "c": "Correct! Spatial diversity uses multiple antennas placed apart to reduce fading and improve reliability.",
+        "d": "Incorrect. Encryption deals with security, not diversity."
       },
       "correctAnswer": "c",
       "difficulty": "beginner"
+    },
+    {
+      "question": "What is the main purpose of beamforming in MISO and MIMO systems?",
+      "answers": {
+        "A": "To reduce the power consumption",
+        "B": "To direct the transmission energy towards specific users",
+        "C": "To simplify the receiver design",
+        "D": "To increase the modulation order"
+      },
+      "explanations": {
+        "A": "Incorrect. Beamforming can improve power efficiency but its main role is to focus energy toward a target direction.",
+        "B": "Correct! Beamforming shapes the transmitted signal spatially to maximize signal strength at the intended user and reduce interference elsewhere.",
+        "C": "Incorrect. Beamforming usually increases transmitter complexity.",
+        "D": "Incorrect. Modulation order is unrelated to beamforming."
+      },
+      "correctAnswer": "B",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "When is equal gain combining (EGC) used?",
+      "answers": {
+        "A": "No CSI at transmitter, but CSI present at receiver",
+        "B": "CSI known at both ends",
+        "C": "No CSI at receiver",
+        "D": "Cannot say"
+      },
+      "explanations": {
+        "A": "Incorrect. This is more typical for maximal ratio combining (MRC).",
+        "B": "Incorrect. EGC does not require CSI at both transmitter and receiver.",
+        "C": "Correct! EGC can be applied when only phase information is known at the receiver, without full channel gain knowledge.",
+        "D": "Incorrect. There is a defined condition when EGC is applicable."
+      },
+      "correctAnswer": "C",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "What is the array gain of Equal Gain Combining (EGC)?",
+      "answers": {
+        "A": "1",
+        "B": "2",
+        "C": "3",
+        "D": "4"
+      },
+      "explanations": {
+        "A": "Correct! EGC normalizes amplitude, so the gain factor compared to MRC is reduced to 1 in normalized SNR terms.",
+        "B": "Incorrect. The gain is not 2.",
+        "C": "Incorrect. The gain is not 3.",
+        "D": "Incorrect. The gain is not 4."
+      },
+      "correctAnswer": "A",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Which combining technique is less efficient when implemented in hardware?",
+      "answers": {
+        "A": "Equal gain combining",
+        "B": "Selection combining",
+        "C": "Depends on the number of antennas",
+        "D": "Both are equally efficient"
+      },
+      "explanations": {
+        "A": "Incorrect. EGC is more efficient in terms of performance compared to selection combining.",
+        "B": "Correct! Selection combining uses only the strongest branch, wasting the potential contributions from other antennas.",
+        "C": "Incorrect. SC is generally less efficient regardless of antenna count.",
+        "D": "Incorrect. Their efficiency differs significantly."
+      },
+      "correctAnswer": "B",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Which of the following most accurately describes the Alamouti scheme?",
+      "answers": {
+        "A": "Combining technique",
+        "B": "Space-time coding scheme",
+        "C": "Error-correcting coding",
+        "D": "None of the above"
+      },
+      "explanations": {
+        "A": "Incorrect. Alamouti is not purely a combining method.",
+        "B": "Correct! Alamouti’s scheme is a 2×1 orthogonal space-time block code for transmit diversity.",
+        "C": "Incorrect. It is not a standard error-correcting code.",
+        "D": "Incorrect. Option B is correct."
+      },
+      "correctAnswer": "B",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "Which of the following is computationally the most complex?",
+      "answers": {
+        "A": "Selection combining",
+        "B": "Equal gain combining",
+        "C": "Maximal ratio combining",
+        "D": "All have same complexity"
+      },
+      "explanations": {
+        "A": "Incorrect. SC is the simplest to implement.",
+        "B": "Incorrect. EGC is less complex than MRC because it does not require amplitude weighting.",
+        "C": "Correct! MRC requires precise channel estimation and optimal weighting, making it computationally the most demanding.",
+        "D": "Incorrect. Their complexities differ significantly."
+      },
+      "correctAnswer": "C",
+      "difficulty": "intermediate"
     }
   ]
 }
