@@ -3,11 +3,13 @@ Spatial diversity is a crucial technique in telecommunications aimed at reducing
 # Receiver Diversity: SIMO
 The combining can be done in several ways which vary in terms of design complexity and  performance gain. Most combining techniques are linear: the output of the combiner is just a weighted sum of the different (independent) fading paths or branches as shown in the figure below.
 
+<p align="center">
 <img src="./images/Exp5.png">
+</p>
 
 $$
 \begin{aligned}
-\mathbf{y} = \left(\sum_{i=1}^{N_r} w_i \mathbf{h}_i\right) \mathbf{x}.
+   \mathbf{y} = \left(\sum_{i=1}^{N_r} w_i \mathbf{h}_i\right) \mathbf{x}.
 \end{aligned}
 $$
 
@@ -19,7 +21,7 @@ There are two types of performance gain associated with receiver space diversity
 
 $$
 \begin{aligned}
-A_g = \frac{\bar{\gamma}_c}{\bar{\gamma}}
+   A_g = \frac{\bar{\gamma}_c}{\bar{\gamma}}
 \end{aligned}
 $$
 
@@ -27,7 +29,7 @@ $$
 
 $$
 \begin{aligned}
-P_S \propto \gamma^{-d},
+   P_S \propto \gamma^{-d},
 \end{aligned}
 $$
 
@@ -38,7 +40,7 @@ Also, characterizing the outage performance becomes a crucial aspect for compari
 
 $$
 \begin{aligned}
-P_{out}(\gamma_0) = p(\gamma_c \leq \gamma_0).
+   P_{out}(\gamma_0) = p(\gamma_c \leq \gamma_0).
 \end{aligned}
 $$
 
@@ -47,13 +49,15 @@ Lower outage probabilities indicate higher reliability and better performance un
 ## Selection Combining
 Selection combining does not assign weights based on channel strengths but rather selects the signal with the highest instantaneous SNR among the received signals. Only the selected signal is further processed, while the others are discarded.
 
+<p align="center">
 <img src="./images/exp5_1.png">
+</p>
 
 The above diagram illustrates selection combining wherein link gain $h_2$ observed by the second antenna in the array is highest. For this case,  received/selected signal in can be written as ${y} =  {h}_2{x}$, where $x$ is the transmitted symbol. In general, the received signal in selection combining is given by 
 
 $$
 \begin{aligned}
-{y} =  \left(\max_i|{h}_i|\right){x}.\nonumber
+   {y} =  \left(\max_i|{h}_i|\right){x}.\nonumber
 \end{aligned}
 $$
 
@@ -61,7 +65,7 @@ The average combined SNR of the array for this technique is given as
 
 $$
 \begin{aligned}
-\bar{\gamma}_c = \sum \frac{\bar{\gamma}_i}{i}
+   \bar{\gamma}_c = \sum \frac{\bar{\gamma}_i}{i}
 \end{aligned}
 $$
 
@@ -71,20 +75,22 @@ We can observe that the SNR gain increases with the number of receive antennas, 
 
 $$
 \begin{aligned}
-P_{out}(\gamma_o) = \left[1 - e^{-\frac{\gamma_0}{\bar{\gamma}}}\right]^{N_r} 
+   P_{out}(\gamma_o) = \left[1 - e^{-\frac{\gamma_0}{\bar{\gamma}}}\right]^{N_r} 
 \end{aligned}
 $$
 
 ## Maximal-Ratio Combining
 Maximal Ratio Combining allocates weights to each received signal based on the strength of the corresponding channel coefficient in $\mathbf{h}$. $\mathbf{w}_i$'s assigned to each signal is proportional to its channel gain, aiming to maximize the signal power.
 
+<p center="align">
 <img src="./images/exp5_3.png">
+</p>
 
 The received signal in MRC is given by
 
 $$
 \begin{aligned}
-y = \mathbf{w}^T\mathbf{h}x
+   y = \mathbf{w}^T\mathbf{h}x
 \end{aligned}
 $$
 
@@ -92,7 +98,7 @@ To maximize the received signal power, the optimal weight vector naturally becom
 
 $$
 \begin{aligned}
-\mathbf{w}=\frac{\mathbf{h}}{\|\mathbf{h}\|}.
+   \mathbf{w}=\frac{\mathbf{h}}{\|\mathbf{h}\|}.
 \end{aligned}
 $$
 
@@ -100,13 +106,13 @@ The instantaneous combined SNR for this technique is given as
 
 $$
 \begin{aligned}
-\gamma_c = \frac{1}{N_0} \sum \| \mathbf{h}_i \|^2
+   \gamma_c = \frac{1}{N_0} \sum \| \mathbf{h}_i \|^2
 \end{aligned}
 $$
 
 $$
 \begin{aligned}
-\gamma_c = \sum \gamma_i
+   \gamma_c = \sum \gamma_i
 \end{aligned}
 $$
 
@@ -114,7 +120,7 @@ where $N_0$ is the noise variance. Thus the avegare combined SNR becomes
 
 $$
 \begin{aligned}
-\bar{\gamma}_c=N_r\bar{\gamma}_i,
+   \bar{\gamma}_c=N_r\bar{\gamma}_i,
 \end{aligned}
 $$
 
@@ -123,19 +129,21 @@ For a Rayleigh fading channel, the outage probability is derived as
 
 $$
 \begin{aligned}
-P_{out}(\gamma_o) = 1-e^{-\frac{\gamma_0}{\bar{\gamma}}}\sum_{k=1}^{N_r}\frac{(\frac{\gamma_0}{\bar{\gamma}})^{k-1}}{(k-1)!}\nonumber
+   P_{out}(\gamma_o) = 1-e^{-\frac{\gamma_0}{\bar{\gamma}}}\sum_{k=1}^{N_r}\frac{(\frac{\gamma_0}{\bar{\gamma}})^{k-1}}{(k-1)!}\nonumber
 \end{aligned}
 $$
 
 ## Equal gain Combining
 Equal gain combining assigns equal weights to each received signal regardless of the channel coefficients' strengths. This technique simplifies the combining process
 
+<p align="center">
 <img src="./images/exp5_2.png">
+</p>
 
 The received signal with EGC is given by
 
 $$
-\mathbf{y} = \left(\sum_{i=1}^{N_r}\mathbf{h}_i\right)w\mathbf{x}.
+   \mathbf{y} = \left(\sum_{i=1}^{N_r}\mathbf{h}_i\right)w\mathbf{x}.
 $$
 
 
@@ -143,7 +151,7 @@ The array gain for this technique is given as
 
 $$
 \begin{aligned}
-\gamma_c = \frac{1}{N_0N_r}\left(\sum_{i=1}^{N_r} \mathbf{h}_i\right)^2.
+   \gamma_c = \frac{1}{N_0N_r}\left(\sum_{i=1}^{N_r} \mathbf{h}_i\right)^2.
 \end{aligned}
 $$
 
@@ -152,7 +160,7 @@ For a Rayleigh fading channel, the outage probability is derived as
 
 $$
 \begin{aligned}
-P_{out}(\gamma_o) = 1 -e^{-2\frac{\gamma_0}{\bar{\gamma}}}-\sqrt{\pi\frac{\gamma_0}{\bar{\gamma}}e^{-\frac{\gamma_0}{\bar{\gamma}}}}\left(1-2Q\left(\sqrt{\frac{2\gamma_0}{\bar{\gamma}}}\right)\right)
+   P_{out}(\gamma_o) = 1 -e^{-2\frac{\gamma_0}{\bar{\gamma}}}-\sqrt{\pi\frac{\gamma_0}{\bar{\gamma}}e^{-\frac{\gamma_0}{\bar{\gamma}}}}\left(1-2Q\left(\sqrt{\frac{2\gamma_0}{\bar{\gamma}}}\right)\right)
 \end{aligned}
 $$
 
