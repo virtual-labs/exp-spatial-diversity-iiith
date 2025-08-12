@@ -2,140 +2,140 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "What, according to you, is the primary advantage of using multiple antennas at the transmitter/receiver?",
+      "question": "How is the weight vector designed in Maximal Ratio Combining (MRC)?",
       "answers": {
-        "a": "Increased battery life",
-        "b": "Improved received signal reliability",
-        "c": "Simplified receiver design",
-        "d": "Reduced hardware costs"
+        "A": "By maximising the SNR",
+        "B": "Using maximum likelihood methods",
+        "C": "By minimising complexity",
+        "D": "None of the above"
       },
       "explanations": {
-        "a": "Incorrect. Multiple antennas do not inherently increase battery life; they may even increase power use.",
-        "b": "Correct! Multiple antennas improve reliability by mitigating fading through spatial diversity and beamforming.",
-        "c": "Incorrect. Multiple antennas generally make the receiver more complex.",
-        "d": "Incorrect. Multiple antennas usually increase hardware costs, not reduce them."
+        "A": "Correct! In MRC, the weights are chosen to maximise the output SNR by matching the phase and scaling with the channel gains.",
+        "B": "Incorrect. Maximum likelihood methods are used for detection, not for designing MRC weights.",
+        "C": "Incorrect. MRC is not designed to minimise complexity — it is more complex than SC or EGC.",
+        "D": "Incorrect. There is a defined method: maximising SNR."
       },
-      "correctAnswer": "b",
+      "correctAnswer": "A",
       "difficulty": "beginner"
     },
     {
-      "question": "Which of the following best describes spatial diversity in wireless communications?",
+      "question": "What is the principle behind designing weight vectors for transmitter diversity schemes when the channel is known?",
       "answers": {
-        "a": "Using different time slots to send the same signal",
-        "b": "Using different frequency bands to transmit data",
-        "c": "Using multiple antennas sufficiently spaced to transmit/receive signals",
-        "d": "Using encryption techniques to secure the communication"
+        "A": "To transmit with more power on the channels with higher SNR",
+        "B": "To transmit with more power on the channels with lower SNR to equalise the SNR on each channel",
+        "C": "To transmit only on the channel that has the least time delay",
+        "D": "None of the above"
       },
       "explanations": {
-        "a": "Incorrect. This is time diversity, not spatial diversity.",
-        "b": "Incorrect. This is frequency diversity, not spatial diversity.",
-        "c": "Correct! Spatial diversity uses multiple antennas placed apart to reduce fading and improve reliability.",
-        "d": "Incorrect. Encryption deals with security, not diversity."
-      },
-      "correctAnswer": "c",
-      "difficulty": "beginner"
-    },
-    {
-      "question": "What is the main purpose of beamforming in MISO and MIMO systems?",
-      "answers": {
-        "A": "To reduce the power consumption",
-        "B": "To direct the transmission energy towards specific users",
-        "C": "To simplify the receiver design",
-        "D": "To increase the modulation order"
-      },
-      "explanations": {
-        "A": "Incorrect. Beamforming can improve power efficiency but its main role is to focus energy toward a target direction.",
-        "B": "Correct! Beamforming shapes the transmitted signal spatially to maximize signal strength at the intended user and reduce interference elsewhere.",
-        "C": "Incorrect. Beamforming usually increases transmitter complexity.",
-        "D": "Incorrect. Modulation order is unrelated to beamforming."
-      },
-      "correctAnswer": "B",
-      "difficulty": "beginner"
-    },
-    {
-      "question": "When is equal gain combining (EGC) used?",
-      "answers": {
-        "A": "No CSI at transmitter, but CSI present at receiver",
-        "B": "CSI known at both ends",
-        "C": "No CSI at receiver",
-        "D": "Cannot say"
-      },
-      "explanations": {
-        "A": "Incorrect. This is more typical for maximal ratio combining (MRC).",
-        "B": "Incorrect. EGC does not require CSI at both transmitter and receiver.",
-        "C": "Correct! EGC can be applied when only phase information is known at the receiver, without full channel gain knowledge.",
-        "D": "Incorrect. There is a defined condition when EGC is applicable."
-      },
-      "correctAnswer": "C",
-      "difficulty": "intermediate"
-    },
-    {
-      "question": "What is the array gain of Equal Gain Combining (EGC)?",
-      "answers": {
-        "A": "1",
-        "B": "2",
-        "C": "3",
-        "D": "4"
-      },
-      "explanations": {
-        "A": "Correct! EGC normalizes amplitude, so the gain factor compared to MRC is reduced to 1 in normalized SNR terms.",
-        "B": "Incorrect. The gain is not 2.",
-        "C": "Incorrect. The gain is not 3.",
-        "D": "Incorrect. The gain is not 4."
+        "A": "Correct! This is the water-filling principle for beamforming: allocate more power to stronger channels to improve overall throughput.",
+        "B": "Incorrect. Power is not shifted to weaker channels unless equalisation is the goal, which is not optimal for maximum SNR.",
+        "C": "Incorrect. Delay alone is not the main criterion for beamforming weight design.",
+        "D": "Incorrect. There is a defined optimal strategy when CSI is known."
       },
       "correctAnswer": "A",
       "difficulty": "intermediate"
     },
     {
-      "question": "Which combining technique is less efficient when implemented in hardware?",
+      "question": "What is the maximum possible diversity order achievable for a transmit diversity system with M transmit antennas?",
       "answers": {
-        "A": "Equal gain combining",
-        "B": "Selection combining",
-        "C": "Depends on the number of antennas",
-        "D": "Both are equally efficient"
+        "A": "M",
+        "B": "M/2",
+        "C": "2M",
+        "D": "Depends on the channel characteristics"
       },
       "explanations": {
-        "A": "Incorrect. EGC is more efficient in terms of performance compared to selection combining.",
-        "B": "Correct! Selection combining uses only the strongest branch, wasting the potential contributions from other antennas.",
-        "C": "Incorrect. SC is generally less efficient regardless of antenna count.",
-        "D": "Incorrect. Their efficiency differs significantly."
+        "A": "Correct! The maximum diversity order with transmit diversity is equal to the number of transmit antennas, assuming independent fading.",
+        "B": "Incorrect. There is no halving unless there are specific constraints.",
+        "C": "Incorrect. The diversity order is not doubled; it is limited to M in transmit-only diversity.",
+        "D": "Incorrect. While fading correlation can reduce diversity, the theoretical maximum is still M."
       },
-      "correctAnswer": "B",
-      "difficulty": "intermediate"
-    },
-    {
-      "question": "Which of the following most accurately describes the Alamouti scheme?",
-      "answers": {
-        "A": "Combining technique",
-        "B": "Space-time coding scheme",
-        "C": "Error-correcting coding",
-        "D": "None of the above"
-      },
-      "explanations": {
-        "A": "Incorrect. Alamouti is not purely a combining method.",
-        "B": "Correct! Alamouti’s scheme is a 2×1 orthogonal space-time block code for transmit diversity.",
-        "C": "Incorrect. It is not a standard error-correcting code.",
-        "D": "Incorrect. Option B is correct."
-      },
-      "correctAnswer": "B",
+      "correctAnswer": "A",
       "difficulty": "beginner"
     },
     {
-      "question": "Which of the following is computationally the most complex?",
+      "question": "What is the diversity order of transmit diversity using MRC?",
       "answers": {
-        "A": "Selection combining",
-        "B": "Equal gain combining",
-        "C": "Maximal ratio combining",
-        "D": "All have same complexity"
+        "A": "4",
+        "B": "3",
+        "C": "2",
+        "D": "1"
       },
       "explanations": {
-        "A": "Incorrect. SC is the simplest to implement.",
-        "B": "Incorrect. EGC is less complex than MRC because it does not require amplitude weighting.",
-        "C": "Correct! MRC requires precise channel estimation and optimal weighting, making it computationally the most demanding.",
-        "D": "Incorrect. Their complexities differ significantly."
+        "A": "Correct! If the system has 4 independent branches (e.g., 4 transmit/receive paths), MRC achieves a diversity order of 4.",
+        "B": "Incorrect. This would correspond to 3 independent branches.",
+        "C": "Incorrect. This would correspond to 2 branches.",
+        "D": "Incorrect. Diversity order 1 is for single-antenna systems."
+      },
+      "correctAnswer": "A",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "What is array gain?",
+      "answers": {
+        "A": "Nr",
+        "B": "γ̄c",
+        "C": "γ̄c / γ̄",
+        "D": "Nr × γ̄"
+      },
+      "explanations": {
+        "A": "Correct! Array gain is the improvement in average SNR proportional to the number of antennas, Nr, when signals are coherently combined.",
+        "B": "Incorrect. γ̄c refers to combined SNR, not array gain directly.",
+        "C": "Incorrect. This ratio describes SNR improvement relative to branch SNR.",
+        "D": "Incorrect. This is not the standard expression for array gain."
+      },
+      "correctAnswer": "A",
+      "difficulty": "beginner"
+    },
+    {
+      "question": "What is diversity order?",
+      "answers": {
+        "A": "Nr",
+        "B": "γ̄c",
+        "C": "γ̄c / γ̄",
+        "D": "Nr × γ̄"
+      },
+      "explanations": {
+        "A": "Incorrect. Nr alone does not define diversity order unless we specify combining method.",
+        "B": "Correct! In some notation, γ̄c is proportional to the slope of the error rate curve in a log-log scale, representing diversity order.",
+        "C": "Incorrect. This ratio measures relative gain, not diversity order.",
+        "D": "Incorrect. This is not a standard metric for diversity order."
+      },
+      "correctAnswer": "B",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "For Nr = 3, arrange the following techniques in order of performance.",
+      "answers": {
+        "A": "MRT > SC > EGC",
+        "B": "SC ≥ EGC > MRT",
+        "C": "MRT ≥ EGC > SC",
+        "D": "EGC = MRT > SC"
+      },
+      "explanations": {
+        "A": "Incorrect. SC generally performs worse than EGC when SNRs vary.",
+        "B": "Incorrect. MRT usually outperforms EGC.",
+        "C": "Correct! Maximum Ratio Transmission (MRT) offers the best performance, followed closely by EGC, and SC is the least effective.",
+        "D": "Incorrect. EGC and MRT are not generally equal in performance."
       },
       "correctAnswer": "C",
       "difficulty": "intermediate"
+    },
+    {
+      "question": "Given that the average SNR for each branch in a selection combining system is 10 dB and there are 3 antennas at the receiver, calculate the average combined SNR.",
+      "answers": {
+        "A": "10 dB",
+        "B": "16.02 dB",
+        "C": "18.33 dB",
+        "D": "13.26 dB"
+      },
+      "explanations": {
+        "A": "Incorrect. This would be the SNR for a single branch, not combined.",
+        "B": "Incorrect. This is too high for SC given the average branch SNR.",
+        "C": "Incorrect. This is higher than what SC can achieve here.",
+        "D": "Correct! Using the SC formula, the expected combined SNR is about 13.26 dB for 3 branches each with 10 dB SNR."
+      },
+      "correctAnswer": "D",
+      "difficulty": "advanced"
     }
   ]
 }
