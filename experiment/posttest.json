@@ -2,55 +2,140 @@
   "version": 2.0,
   "questions": [
     {
-      "question": "For $N_r$ = 3, arrange the following techniques in order.",
+      "question": "How is the weight vector designed in Maximal Ratio Combining (MRC)?",
       "answers": {
-        "a": "MRT > SC > EGC",
-        "b": "SC >= EGC > MRT",
-        "c": "MRT >= EGC > SC",
-        "d": "EGC = MRT < SC"
+        "A": "By maximising the SNR",
+        "B": "Using maximum likelihood methods",
+        "C": "By minimising complexity",
+        "D": "None of the above"
       },
       "explanations": {
-        "a": "Please try again.. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC).",
-        "b": "Please try again.. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC).",
-        "c": "Correct!",
-        "d": "Please try again.. Maximum Ratio Transmission (MRT) is the best technique followed by Equal Gain Combining (EGC) and then Selection Combining (SC)."
+        "A": "Correct! In MRC, the weights are chosen to maximise the output SNR by matching the phase and scaling with the channel gains.",
+        "B": "Incorrect. Maximum likelihood methods are used for detection, not for designing MRC weights.",
+        "C": "Incorrect. MRC is not designed to minimise complexity — it is more complex than SC or EGC.",
+        "D": "Incorrect. There is a defined method: maximising SNR."
       },
-      "correctAnswer": "c",
+      "correctAnswer": "A",
       "difficulty": "beginner"
     },
     {
-      "question": "What is the main purpose of beamforming in MISO and MIMO systems?",
+      "question": "What is the principle behind designing weight vectors for transmitter diversity schemes when the channel is known?",
       "answers": {
-        "a": "To reduce the power consumption",
-        "b": "To direct the transmission energy towards specific users",
-        "c": "To simplify the receiver design",
-        "d": "To increase the modulation order"
+        "A": "To transmit with more power on the channels with higher SNR",
+        "B": "To transmit with more power on the channels with lower SNR to equalise the SNR on each channel",
+        "C": "To transmit only on the channel that has the least time delay",
+        "D": "None of the above"
       },
       "explanations": {
-        "a": "Please try again.. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users.",
-        "b": "Correct!",
-        "c": "Please try again.. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users.",
-        "d": "Please try again.. Beamforming is used to direct the transmission energy towards specific users in MISO and MIMO systems. This technique can improve the signal quality and increase the data rate for the intended users."
+        "A": "Correct! This is the water-filling principle for beamforming: allocate more power to stronger channels to improve overall throughput.",
+        "B": "Incorrect. Power is not shifted to weaker channels unless equalisation is the goal, which is not optimal for maximum SNR.",
+        "C": "Incorrect. Delay alone is not the main criterion for beamforming weight design.",
+        "D": "Incorrect. There is a defined optimal strategy when CSI is known."
       },
-      "correctAnswer": "b",
+      "correctAnswer": "A",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "What is the maximum possible diversity order achievable for a transmit diversity system with M transmit antennas?",
+      "answers": {
+        "A": "M",
+        "B": "M/2",
+        "C": "2M",
+        "D": "Depends on the channel characteristics"
+      },
+      "explanations": {
+        "A": "Correct! The maximum diversity order with transmit diversity is equal to the number of transmit antennas, assuming independent fading.",
+        "B": "Incorrect. There is no halving unless there are specific constraints.",
+        "C": "Incorrect. The diversity order is not doubled; it is limited to M in transmit-only diversity.",
+        "D": "Incorrect. While fading correlation can reduce diversity, the theoretical maximum is still M."
+      },
+      "correctAnswer": "A",
       "difficulty": "beginner"
     },
-     {
-      "question": "Given that the average SNR for each branch in a selection combining system is 10 dB and there are 3 antennas at the receiver, calculate the average combined SNR (in dB)",
+    {
+      "question": "What is the diversity order of transmit diversity using MRC?",
       "answers": {
-        "a": "10",
-        "b": "16.02",
-        "c": "18.33",
-        "d": "13.73"
+        "A": "4",
+        "B": "3",
+        "C": "2",
+        "D": "1"
       },
       "explanations": {
-        "a": "Please try again.. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33.",
-        "b": "Please try again.. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33.",
-        "c": "Correct!",
-        "d": "Please try again.. The array gain is ratio of average combined SNR to average SNR per branch. Using the array gain formula for SC, the average combined SNR is 10(1+0.5+0.333) = 18.33."
+        "A": "Correct! If the system has 4 independent branches (e.g., 4 transmit/receive paths), MRC achieves a diversity order of 4.",
+        "B": "Incorrect. This would correspond to 3 independent branches.",
+        "C": "Incorrect. This would correspond to 2 branches.",
+        "D": "Incorrect. Diversity order 1 is for single-antenna systems."
       },
-      "correctAnswer": "c",
+      "correctAnswer": "A",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "What is array gain?",
+      "answers": {
+        "A": "Nr",
+        "B": "γ̄c",
+        "C": "γ̄c / γ̄",
+        "D": "Nr × γ̄"
+      },
+      "explanations": {
+        "A": "Correct! Array gain is the improvement in average SNR proportional to the number of antennas, Nr, when signals are coherently combined.",
+        "B": "Incorrect. γ̄c refers to combined SNR, not array gain directly.",
+        "C": "Incorrect. This ratio describes SNR improvement relative to branch SNR.",
+        "D": "Incorrect. This is not the standard expression for array gain."
+      },
+      "correctAnswer": "A",
       "difficulty": "beginner"
+    },
+    {
+      "question": "What is diversity order?",
+      "answers": {
+        "A": "Nr",
+        "B": "γ̄c",
+        "C": "γ̄c / γ̄",
+        "D": "Nr × γ̄"
+      },
+      "explanations": {
+        "A": "Incorrect. Nr alone does not define diversity order unless we specify combining method.",
+        "B": "Correct! In some notation, γ̄c is proportional to the slope of the error rate curve in a log-log scale, representing diversity order.",
+        "C": "Incorrect. This ratio measures relative gain, not diversity order.",
+        "D": "Incorrect. This is not a standard metric for diversity order."
+      },
+      "correctAnswer": "B",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "For Nr = 3, arrange the following techniques in order of performance.",
+      "answers": {
+        "A": "MRT > SC > EGC",
+        "B": "SC ≥ EGC > MRT",
+        "C": "MRT ≥ EGC > SC",
+        "D": "EGC = MRT > SC"
+      },
+      "explanations": {
+        "A": "Incorrect. SC generally performs worse than EGC when SNRs vary.",
+        "B": "Incorrect. MRT usually outperforms EGC.",
+        "C": "Correct! Maximum Ratio Transmission (MRT) offers the best performance, followed closely by EGC, and SC is the least effective.",
+        "D": "Incorrect. EGC and MRT are not generally equal in performance."
+      },
+      "correctAnswer": "C",
+      "difficulty": "intermediate"
+    },
+    {
+      "question": "Given that the average SNR for each branch in a selection combining system is 10 dB and there are 3 antennas at the receiver, calculate the average combined SNR.",
+      "answers": {
+        "A": "10 dB",
+        "B": "16.02 dB",
+        "C": "18.33 dB",
+        "D": "13.26 dB"
+      },
+      "explanations": {
+        "A": "Incorrect. This would be the SNR for a single branch, not combined.",
+        "B": "Incorrect. This is too high for SC given the average branch SNR.",
+        "C": "Incorrect. This is higher than what SC can achieve here.",
+        "D": "Correct! Using the SC formula, the expected combined SNR is about 13.26 dB for 3 branches each with 10 dB SNR."
+      },
+      "correctAnswer": "D",
+      "difficulty": "advanced"
     }
   ]
 }
