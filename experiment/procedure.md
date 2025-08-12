@@ -1,9 +1,9 @@
 To explore spatial diversity, follow the steps outlined below.
   1) Begin by choosing the diversity type for your experiment. You can either select:
      
-      1.1) SIMO (Single Input, Multiple Output): In this configuration, there is a single transmitter (single input) and multiple receivers (multiple outputs), allowing for the use of multiple antennas at the receiver to improve signal reception.
+      - SIMO (Single Input, Multiple Output): In this configuration, there is a single transmitter (single input) and multiple receivers (multiple outputs), allowing for the use of multiple antennas at the receiver to improve signal reception.
      
-      1.2) MISO (Multiple Input, Single Output): In this configuration, there are multiple transmitters (multiple inputs) and a single receiver (single output), using multiple antennas at the transmitter side for transmission diversity.
+      - MISO (Multiple Input, Single Output): In this configuration, there are multiple transmitters (multiple inputs) and a single receiver (single output), using multiple antennas at the transmitter side for transmission diversity.
      
   3) Next, enter the number of antennas you want to use for spatial diversity at either the transmitter or receiver (depending on whether you chose SIMO or MISO).
   4) After entering the desired number of antennas, click on the "Generate Diagram" button. This will display a diagram showing the antennas and the channel coefficients (the parameters that define the propagation between antennas). The channel coefficients provide information about the strength and quality of the links between the different antennas.
