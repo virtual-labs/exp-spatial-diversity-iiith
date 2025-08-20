@@ -1,0 +1,10 @@
+
+/home/runner/work/exp-spatial-diversity-iiith/exp-spatial-diversity-iiith/experiment/simulation/js/main.js
+    2:10  warning  'openPart' is defined but never used                no-unused-vars
+   27:20  warning  'd3' is not defined                                 no-undef
+  152:17  warning  Unexpected lexical declaration in case block        no-case-declarations
+  155:17  warning  Unexpected lexical declaration in case block        no-case-declarations
+  319:11  warning  'antennaSystem' is assigned a value but never used  no-unused-vars
+
+✖ 5 problems (0 errors, 5 warnings)
+
