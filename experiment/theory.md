@@ -87,60 +87,6 @@ $$
 \end{aligned}
 $$
 
-## Maximal-Ratio Combining
-Maximal Ratio Combining allocates weights to each received signal based on the strength of the corresponding channel coefficient in $\mathbf{h}$. $\mathbf{w}_i$'s assigned to each signal is proportional to its channel gain, aiming to maximize the signal power.
-
-<p align="center">
-<img src="./images/exp5_3.png">
-</p>
-
-The received signal in MRC is given by
-
-$$
-\begin{aligned}
-   y = \mathbf{w}^T\mathbf{h}x
-\end{aligned}
-$$
-
-To maximize the received signal power, the optimal weight vector naturally becomes
-
-$$
-\begin{aligned}
-   \mathbf{w}=\frac{\mathbf{h}}{\|\mathbf{h}\|}.
-\end{aligned}
-$$
-
-The instantaneous combined SNR for this technique is given as
-
-$$
-\begin{aligned}
-   \gamma_c = \frac{1}{N_0} \sum \| \mathbf{h}_i \|^2
-\end{aligned}
-$$
-
-$$
-\begin{aligned}
-   \gamma_c = \sum \gamma_i
-\end{aligned}
-$$
-
-where $N_0$ is the noise variance. Thus the avegare combined SNR becomes
-
-$$
-\begin{aligned}
-   \bar{\gamma}_c=N_r\bar{\gamma}_i,
-\end{aligned}
-$$
-
-From this, it can observed that array gain of MRC increases linearly with the number of receive antennas $N_r$.
-For a Rayleigh fading channel, the outage probability is derived as
-
-$$
-\begin{aligned}
-   P_{out}(\gamma_o) = 1-e^{-\frac{\gamma_0}{\bar{\gamma}}}\sum_{k=1}^{N_r}\frac{(\frac{\gamma_0}{\bar{\gamma}})^{k-1}}{(k-1)!}\nonumber
-\end{aligned}
-$$
-
 ## Equal gain Combining
 Equal gain combining co-phases the signals across different branches i.e. $w_i=e^{-j\theta_i}$ where $\theta_i=\angle \mathbf{h}_i$ is the phase of the $i$-th branch. 
 
@@ -160,11 +106,11 @@ The array gain for this technique is given as
 
 $$
 \begin{aligned}
-   \gamma_c = \frac{\bar{\gamma}}{N_r}\left(\sum_{i=1}^{N_r} \mathbf{r}_i\right)^2,
+   \gamma_c = \frac{1}{N_0N_r}\left(\sum_{i=1}^{N_r} \mathbf{r}_i\right)^2,
 \end{aligned}
 $$
 
-where $\bar{\gamma}$ is the branch SNR.
+where $N_0$ is the PSD of noise.
 
 It can observed that array gain increases linearly with the number of receive antennas, $N_r$. However, performance is slightly less than MRC. This is the price paid for reduced complexity.
 For a Rayleigh fading channel, the outage probability is derived as
@@ -175,5 +121,56 @@ $$
 \end{aligned}
 $$
 
+## Maximal-Ratio Combining (MRC)
+Maximal Ratio Combining allocates weights to the received signals based on the channel coefficient in $\mathbf{h}$ such that it maximizes the instantaneous recieved SNR. 
+
+<p align="center">
+<img src="./images/exp5_3.png">
+</p>
+
+The received signal in MRC is given by
+
+$$
+\begin{aligned}
+   y = \mathbf{w}^T\mathbf{h}x
+\end{aligned}
+$$
+
+The optimal weight vector (i.e MRC weights) that maximizes the instantaneous recieved SNR  is
+
+$$
+\begin{aligned}
+   \mathbf{w}=\frac{\mathbf{h}}{\|\mathbf{h}\|}.
+\end{aligned}
+$$
+
+The instantaneous combined SNR for this technique is given as
+
+$$
+\begin{aligned}
+   \gamma_c = \frac{1}{N_0} \sum_{i=1}^{N_r} \| \mathbf{h}_i \|^2 = \sum \gamma_i
+\end{aligned}
+$$
+
+
+Thus the average combined SNR becomes
+
+$$
+\begin{aligned}
+   \bar{\gamma}_c=N_r\bar{\gamma}_i.
+\end{aligned}
+$$
+
+For $\bar{\gamma_i} = \bar{\gamma}$, the array gain of MRC becomes $A_g = N_r$. It can be observed that MRCs array gain increases linearly with the number of antennas which is better when compared to the other combining techniques. Besides, it can also be noted that the combined SNR is the sum of individuaal branch SNRs which is also higher compared to other techniques.
+
+For a Rayleigh fading channel, the outage probability is derived as
+
+$$
+\begin{aligned}
+   P_{out}(\gamma_o) = 1-e^{-\frac{\gamma_0}{\bar{\gamma}}}\sum_{k=1}^{N_r}\frac{(\frac{\gamma_0}{\bar{\gamma}})^{k-1}}{(k-1)!}\nonumber
+\end{aligned}
+$$
+
+
 # Transmit Diversity: MISO
-When the channel state information is known at the transmitter, combining is done in a way similar to the SIMO using Selection combing, equal gain combining, and maximal ratio combining.
+When the channel state information is known at the transmitter, combining can be done in a way similar to the SIMO system using one of the techniques such as  selection combing, equal gain combining, and maximal ratio combining which are discussed above.
