@@ -142,7 +142,7 @@ $$
 $$
 
 ## Equal gain Combining
-Equal gain combining assigns equal weights to each received signal regardless of the channel coefficients' strengths. This technique simplifies the combining process
+Equal gain combining assigns co-phases the signals across different branches i.e. $w_i=e^{-j\theta_i}$ where $\theta_i$ is the phase of the $i$-th branch. This technique simplifies the combining process
 
 <p align="center">
 <img src="./images/exp5_2.png">
