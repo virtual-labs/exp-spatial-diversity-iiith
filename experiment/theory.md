@@ -142,7 +142,7 @@ $$
 $$
 
 ## Equal gain Combining
-Equal gain combining assigns co-phases the signals across different branches i.e. $w_i=e^{-j\theta_i}$ where $\theta_i$ is the phase of the $i$-th branch. This technique simplifies the combining process
+Equal gain combining co-phases the signals across different branches i.e. $w_i=e^{-j\theta_i}$ where $\theta_i=\angle \mathbf{h}_i$ is the phase of the $i$-th branch. 
 
 <p align="center">
 <img src="./images/exp5_2.png">
@@ -151,17 +151,20 @@ Equal gain combining assigns co-phases the signals across different branches i.e
 The received signal with EGC is given by
 
 $$
-   \mathbf{y} = \left(\sum_{i=1}^{N_r}\mathbf{h}_i\right)w\mathbf{x}.
+   \mathbf{y} = \left(\sum_{i=1}^{N_r}\mathbf{h}_i w_i \right)\mathbf{x} = \left(\sum_{i=1}^{N_r}r_i\right)\mathbf{x},
 $$
 
+where $r_i=|\mathbf{h}_i|$.
 
 The array gain for this technique is given as
 
 $$
 \begin{aligned}
-   \gamma_c = \frac{1}{N_0N_r}\left(\sum_{i=1}^{N_r} \mathbf{h}_i\right)^2.
+   \gamma_c = \frac{\bar{\gamma}}{N_r}\left(\sum_{i=1}^{N_r} \mathbf{r}_i\right)^2,
 \end{aligned}
 $$
+
+where $\bar{\gamma}$ is the branch SNR.
 
 It can observed that array gain increases linearly with the number of receive antennas, $N_r$. However, performance is slightly less than MRC. This is the price paid for reduced complexity.
 For a Rayleigh fading channel, the outage probability is derived as
