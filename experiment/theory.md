@@ -79,7 +79,7 @@ $$
 
 We can observe that the array gain (combined SNR gain) increases with the number of receive antennas, but not linearly. In particular, with increase in number of branches $N_r$, the rate of gain diminishes. For instance, increasing the branches from 1 to 2 gives the gain of 0.5 and howvever, increasing from 2 to 3 gives the gain of 0.33. 
 
- For a Rayleigh fading channel, the outage probability is derived as
+ For a Rayleigh fading channel, the outage probability is derived as [2]
 
 $$
 \begin{aligned}
@@ -113,7 +113,8 @@ $$
 where $N_0$ is the PSD of noise.
 
 It can observed that array gain increases linearly with the number of receive antennas, $N_r$. However, performance is slightly less than MRC. This is the price paid for reduced complexity.
-For a Rayleigh fading channel, the outage probability is derived as
+
+For a Rayleigh fading channel, the outage probability is derived as [2]
 
 $$
 \begin{aligned}
@@ -163,7 +164,7 @@ $$
 
 For $\bar{\gamma_i} = \bar{\gamma}$, the array gain of MRC becomes $A_g = N_r$. It can be observed that MRCs array gain increases linearly with the number of antennas which is better when compared to the other combining techniques. Besides, it can also be noted that the combined SNR is the sum of individuaal branch SNRs which is also higher compared to other techniques.
 
-For a Rayleigh fading channel, the outage probability is derived as
+For a Rayleigh fading channel, the outage probability is derived as [2]
 
 $$
 \begin{aligned}
