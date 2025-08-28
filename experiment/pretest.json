@@ -70,23 +70,6 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "What is the array gain of Equal Gain Combining (EGC)?",
-      "answers": {
-        "A": "1",
-        "B": "2",
-        "C": "3",
-        "D": "4"
-      },
-      "explanations": {
-        "A": "Correct! EGC normalizes amplitude, so the gain factor compared to MRC is reduced to 1 in normalized SNR terms.",
-        "B": "Incorrect. The gain is not 2.",
-        "C": "Incorrect. The gain is not 3.",
-        "D": "Incorrect. The gain is not 4."
-      },
-      "correctAnswer": "A",
-      "difficulty": "intermediate"
-    },
-    {
       "question": "Which combining technique is less efficient when implemented in hardware?",
       "answers": {
         "A": "Equal gain combining",
