@@ -11,7 +11,13 @@ The output of the combiner is given by
 
 $$
 \begin{aligned}
-   \mathbf{y} = \left(\sum_{i=1}^{N_r} w_i \mathbf{h}_i\right) \mathbf{x} + n.
+   \mathbf{y} = \sum_{i=1}^{N_r} w_i \mathbf{h}_i \mathbf{x} + w_in_i 
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+   \mathbf{y} = \sum_{i=1}^{N_r} w_i \mathbf{h}_i \mathbf{x} + \tilde{n} 
 \end{aligned}
 $$
 
@@ -61,11 +67,11 @@ Selection combining does not assign weights based on channel strengths but rathe
 <img src="./images/exp5_1.png">
 </p>
 
-The above figure illustrates selection combining wherein link gain $h_2$ observed by the second antenna in the array is the highest. For this case,  received/selected signal can be written as ${y} =  {h}_2{x}$, where $x$ is the transmitted symbol. In general, the received signal in selection combining is given by 
+The above figure illustrates selection combining wherein link gain $h_2$ observed by the second antenna in the array is the highest. For this case,  received/selected signal can be written as ${y} =  {h}_2{x} + n_2$, where $x$ is the transmitted symbol. In general, the received signal in selection combining is given by 
 
 $$
 \begin{aligned}
-   {y} =  \left(\max_i|{h}_i|\right){x}.\nonumber
+   {y} =  \left(\max_i|{h}_i|\right){x} + n_i.\nonumber
 \end{aligned}
 $$
 
@@ -73,7 +79,7 @@ The average combined SNR of the array for this technique is given as
 
 $$
 \begin{aligned}
-   \bar{\gamma}_c = \sum \frac{\bar{\gamma}_i}{i}.
+   \bar{\gamma}_c = \sum \frac{\bar{\gamma}_i}{i}
 \end{aligned}
 $$
 
@@ -97,9 +103,18 @@ Equal gain combining co-phases the signals across different branches i.e. $w_i=e
 The received signal with EGC is given by
 
 $$
-   \mathbf{y} = \left(\sum_{i=1}^{N_r}\mathbf{h}_i w_i \right)\mathbf{x} = \left(\sum_{i=1}^{N_r}r_i\right)\mathbf{x},
+\begin{aligned}
+   \mathbf{y} = \left(\sum_{i=1}^{N_r}\mathbf{h}_i w_i \right)\mathbf{x}
+\end{aligned}
 $$
 
+$$
+\begin{aligned}
+   \mathbf{y} = \sum_{i=1}^{N_r}r_i\mathbf{x},
+\end{aligned}
+$$
+
+ 
 where $r_i=|\mathbf{h}_i|$.
 
 The array gain for this technique is given as
