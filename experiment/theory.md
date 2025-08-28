@@ -165,4 +165,8 @@ $$
 $$
 
 # Transmit Diversity: MISO
-When the channel state information is known at the transmitter, combining is done in a way similar to the SIMO using Selection combing, equal gain combining, and maximal ratio combining.
+When the channel state information is known at the transmitter, combining can be done in a way similar to the SIMO system using one of the techniques such as  selection combing, equal gain combining, and maximal ratio combining which are discussed above and the basic visualization is given below.
+
+<p align="center">
+<img src="./images/MISO.png">
+</p>
