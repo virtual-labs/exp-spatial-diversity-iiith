@@ -104,23 +104,6 @@
       "difficulty": "intermediate"
     },
     {
-      "question": "Which of the following most accurately describes the Alamouti scheme?",
-      "answers": {
-        "A": "Combining technique",
-        "B": "Space-time coding scheme",
-        "C": "Error-correcting coding",
-        "D": "None of the above"
-      },
-      "explanations": {
-        "A": "Incorrect. Alamouti is not purely a combining method.",
-        "B": "Correct! Alamouti’s scheme is a 2×1 orthogonal space-time block code for transmit diversity.",
-        "C": "Incorrect. It is not a standard error-correcting code.",
-        "D": "Incorrect. Option B is correct."
-      },
-      "correctAnswer": "B",
-      "difficulty": "beginner"
-    },
-    {
       "question": "Which of the following is computationally the most complex?",
       "answers": {
         "A": "Selection combining",
