@@ -1,4 +1,3 @@
-
 function openPart(evt, name) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
@@ -29,10 +28,59 @@ class AntennaSystem {
         this.setupAntennaSymbols();
     }
 
+    // -------------------------------------------------------------------
+    // NEW: Helper methods for complex number operations
+    // -------------------------------------------------------------------
+
+    /**
+     * Formats a complex number or a real number for display.
+     * @param {object|number} c - The complex number {real, imag} or a real number.
+     * @param {number} precision - The number of decimal places.
+     * @returns {string} The formatted string (e.g., "0.123 + j0.456").
+     */
+    formatComplex(c, precision = 3) {
+        if (typeof c === 'number') {
+            return c.toFixed(precision); // Handle real numbers gracefully
+        }
+        const sign = c.imag >= 0 ? '+' : '-';
+        return `${c.real.toFixed(precision)} ${sign} j${Math.abs(c.imag).toFixed(precision)}`;
+    }
+
+    /**
+     * Calculates the magnitude of a complex number.
+     * @param {object|number} c - The complex number {real, imag} or a real number.
+     * @returns {number} The magnitude.
+     */
+    getMagnitude(c) {
+        if (typeof c === 'number') {
+            return Math.abs(c);
+        }
+        return Math.sqrt(c.real ** 2 + c.imag ** 2);
+    }
+
+    /**
+     * Multiplies two complex numbers (or a complex and a real number).
+     * @param {object|number} c1
+     * @param {object|number} c2
+     * @returns {object} The resulting complex number {real, imag}.
+     */
+    multiplyComplex(c1, c2) {
+        const val1 = (typeof c1 === 'number') ? { real: c1, imag: 0 } : c1;
+        const val2 = (typeof c2 === 'number') ? { real: c2, imag: 0 } : c2;
+
+        const real = val1.real * val2.real - val1.imag * val2.imag;
+        const imag = val1.real * val2.imag + val1.imag * val2.real;
+        return { real, imag };
+    }
+
+    // -------------------------------------------------------------------
+    // Core class methods (with modifications)
+    // -------------------------------------------------------------------
+
     setupAntennaSymbols() {
         const defs = this.svg.append('defs');
 
-        // Transmitter antenna symbol (larger)
+        // Transmitter antenna symbol
         defs.append('symbol')
             .attr('id', 'transmitter')
             .attr('viewBox', '0 0 100 100')
@@ -41,7 +89,7 @@ class AntennaSystem {
             .attr('width', '100')
             .attr('height', '100');
 
-        // Receiver antenna symbol (smaller)
+        // Receiver antenna symbol
         defs.append('symbol')
             .attr('id', 'receiver')
             .attr('viewBox', '0 0 100 100')
@@ -63,6 +111,7 @@ class AntennaSystem {
             .attr('d', 'M 0 0 L 10 5 L 0 10 Z')
             .attr('fill', 'var(--secondary-color)');
     }
+
     setupEventListeners() {
         const generateButton = document.getElementById('generate-diagram');
         const applyDiversityButton = document.getElementById('apply-diversity');
@@ -71,7 +120,6 @@ class AntennaSystem {
 
         generateButton.addEventListener('click', () => {
             this.generateSystemDiagram();
-            // Once the diagram is generated and combining method is visible, toggle buttons
             if (combiningMethodContainer.style.display === 'block') {
                 generateButton.style.display = 'none';
                 applyDiversityButton.style.display = 'block';
@@ -110,16 +158,13 @@ class AntennaSystem {
         this.setupAntennaSymbols();
 
         const coefficients = this.generateRayleighCoefficients(numAntennas);
-        const weights = coefficients.map(() => 1 / numAntennas); // Default weights
+        const weights = coefficients.map(() => 1 / numAntennas); // Default real weights
 
-        // Render diagram with default weights
         this.renderDiagram(systemType, numAntennas, coefficients, weights);
 
-        // Make combining method dropdown visible
         const combiningMethodContainer = document.getElementById('combining-method-container');
         combiningMethodContainer.style.display = 'block';
 
-        // Display default coefficients and weights
         this.displayCoefficients(coefficients, weights);
     }
 
@@ -135,29 +180,59 @@ class AntennaSystem {
         this.renderDiagram(systemType, numAntennas, coefficients, weights);
     }
 
+    /**
+     * MODIFIED: Generates complex Rayleigh fading channel coefficients.
+     * Each coefficient is a complex number h = (z1 + j*z2)/sqrt(2),
+     * where z1 and z2 are standard normal random variables.
+     */
     generateRayleighCoefficients(numAntennas) {
         return Array.from({ length: numAntennas }, () => {
+            // Box-Muller transform to get two standard normal random variables (z1, z2)
             const u1 = Math.random();
             const u2 = Math.random();
-            const coefficient = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-            return Math.abs(coefficient); // Return the absolute value
+            const R = Math.sqrt(-2 * Math.log(u1));
+            const theta = 2 * Math.PI * u2;
+            const z1 = R * Math.cos(theta);
+            const z2 = R * Math.sin(theta);
+
+            // Return as a complex object, scaled for unit average power E[|h|^2] = 1
+            return { real: z1 / Math.sqrt(2), imag: z2 / Math.sqrt(2) };
         });
     }
 
+    /**
+     * MODIFIED: Calculates weights - ALL weights are always real numbers.
+     */
     calculateWeights(coefficients, method) {
         switch (method) {
             case 'EGC':
-                return coefficients.map(() => 1 / coefficients.length);
+                // Equal Gain Combining: Equal real weights
+                const N_egc = coefficients.length;
+                return coefficients.map(() => 1 / N_egc);
+
             case 'SC':
-                const maxIndex = coefficients.indexOf(Math.max(...coefficients));
-                return coefficients.map((_, i) => i === maxIndex ? 1 : 0);
+                // Selection Combining: Select the branch with the highest |h|. Weights are real (0 or 1).
+                const magnitudes = coefficients.map(h => this.getMagnitude(h));
+                const maxIndex = magnitudes.indexOf(Math.max(...magnitudes));
+                return coefficients.map((_, i) => (i === maxIndex ? 1 : 0));
+
             case 'MRC':
-                const normFactor = Math.sqrt(coefficients.reduce((sum, c) => sum + c ** 2, 0));
-                return coefficients.map(coeff => coeff / normFactor);
+                // Maximal-Ratio Combining: Weight is proportional to |h_i|^2 (real-valued weights)
+                const totalPower = coefficients.reduce((sum, h) => sum + this.getMagnitude(h) ** 2, 0);
+                if (totalPower === 0) return coefficients.map(() => 0);
+                return coefficients.map(h => {
+                    const power = this.getMagnitude(h) ** 2;
+                    return power / totalPower;
+                });
+
             default:
                 throw new Error('Invalid combining method');
         }
     }
+
+    /**
+     * MODIFIED: Displays complex coefficients and weights in a table.
+     */
     displayCoefficients(coefficients, weights) {
         const container = document.getElementById('table-container');
         container.style.display = 'block';
@@ -166,42 +241,52 @@ class AntennaSystem {
                 <thead>
                     <tr>
                         <th style="border: 1px solid #ddd; padding: 8px;">Antenna</th>
-                        <th style="border: 1px solid #ddd; padding: 8px;">Channel Coeff.</th>
-                        <th style="border: 1px solid #ddd; padding: 8px;">Weight</th>
-                        <th style="border: 1px solid #ddd; padding: 8px;">Combined Gain</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Channel Coeff. (h)</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Weight (w)</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Combined Gain |h*w|</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${coefficients.map((coeff, i) => `
+                    ${coefficients.map((coeff, i) => {
+                        const weight = weights[i];
+                        const combinedProduct = this.multiplyComplex(coeff, weight);
+                        const gain = this.getMagnitude(combinedProduct);
+                        return `
                         <tr>
                             <td style="border: 1px solid #ddd; padding: 8px;">${i + 1}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${coeff.toFixed(3)}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${weights[i].toFixed(3)}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${(coeff * weights[i]).toFixed(3)}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${this.formatComplex(coeff, 3)}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${this.formatComplex(weight, 3)}</td>
+                            <td style="border: 1px solid #ddd; padding: 8px;">${this.formatComplex(combinedProduct, 3)}</td>
                         </tr>
-                    `).join('')}
+                        `}).join('')}
                 </tbody>
             </table>
         `;
     }
 
+    /**
+     * MODIFIED: Renders the diagram with improved spacing and layout to prevent antenna cutoff.
+     */
     renderDiagram(systemType, numAntennas, coefficients, weights) {
         this.svg.selectAll('*').remove();
         this.setupAntennaSymbols();
 
         const width = 800;
-        const height = 600;
+        const height = Math.max(600, numAntennas * 80 + 100); // Dynamic height based on number of antennas
+        
+        // Update SVG height
+        this.svg.attr('height', height);
+        
         const centerX = width / 4;
         const centerY = height / 2;
         const antennaSize = 50;
-        const verticalSpacing = 70;
+        const verticalSpacing = Math.min(70, (height - 100) / Math.max(numAntennas - 1, 1)); // Dynamic spacing
         const gap = 20;
 
-        const rightX = width * 0.75;
+        const rightX = width * 0.6; // Moved antennas more to the left to make room for labels
         const startY = centerY - ((numAntennas - 1) * verticalSpacing) / 2;
 
         if (systemType === 'SIMO') {
-            // Single transmitter on the left, multiple receivers on the right
             this.svg.append('use')
                 .attr('href', '#transmitter')
                 .attr('class', 'antenna-image')
@@ -221,15 +306,10 @@ class AntennaSystem {
                     .attr('y2', y)
                     .attr('marker-end', `url(#arrowhead)`);
 
-                const labelOffset = 3.75;   // Offset from the line    
+                const labelOffset = 3.75;
                 const labelX = (centerX + rightX) / 2;
-                const labelY = (centerY + y) / 2 - labelOffset; // Adjusted to appear above the line
-                const angle = Math.atan2(
-                    systemType === 'SIMO' ? y - centerY : centerY - y, 
-                    systemType === 'SIMO' ? rightX - centerX : centerX - rightX
-                ) * (180 / Math.PI);
-
-                // Ensure the text is upright
+                const labelY = (centerY + y) / 2 - labelOffset;
+                const angle = Math.atan2(y - centerY, rightX - centerX) * (180 / Math.PI);
                 const adjustedAngle = angle < -90 || angle > 90 ? angle + 180 : angle;
 
                 this.svg.append('text')
@@ -239,13 +319,14 @@ class AntennaSystem {
                     .attr('text-anchor', 'middle')
                     .attr('fill', 'var(--secondary-color)')
                     .attr('transform', `rotate(${adjustedAngle}, ${labelX}, ${labelY})`)
-                    .text(`h${i + 1}: ${coefficients[i].toFixed(2)}`);
+                    .text(`h${i + 1}: ${this.formatComplex(coefficients[i], 2)}`);
 
+                // Position weight labels further to the right
                 this.svg.append('text')
                     .attr('class', 'weight-label')
-                    .attr('x', rightX + antennaSize / 2 + 26)
+                    .attr('x', rightX + antennaSize / 2 + 60) // Increased offset
                     .attr('y', y)
-                    .text(`W${i + 1}: ${weights[i].toFixed(2)}`);
+                    .text(`W${i + 1}: ${this.formatComplex(weights[i], 2)}`);
 
                 this.svg.append('use')
                     .attr('href', '#receiver')
@@ -256,7 +337,6 @@ class AntennaSystem {
                     .attr('height', antennaSize);
             }
         } else if (systemType === 'MISO') {
-            // Multiple transmitters on the right, single receiver on the left
             this.svg.append('use')
                 .attr('href', '#receiver')
                 .attr('class', 'antenna-image')
@@ -274,17 +354,12 @@ class AntennaSystem {
                     .attr('y1', y)
                     .attr('x2', centerX + gap)
                     .attr('y2', centerY)
-                    .attr('marker-end', `url(#arrowhead)`); // Arrowhead at receiving end (single antenna)
+                    .attr('marker-end', `url(#arrowhead)`);
 
-                const labelOffset = 3.75;   // Offset from the line    
+                const labelOffset = 3.75;
                 const labelX = (centerX + rightX) / 2;
-                const labelY = (centerY + y) / 2 - labelOffset; // Adjusted to appear above the line
-                const angle = Math.atan2(
-                    systemType === 'SIMO' ? y - centerY : centerY - y, 
-                    systemType === 'SIMO' ? rightX - centerX : centerX - rightX
-                ) * (180 / Math.PI);
-
-                // Ensure the text is upright
+                const labelY = (centerY + y) / 2 - labelOffset;
+                const angle = Math.atan2(centerY - y, centerX - rightX) * (180 / Math.PI);
                 const adjustedAngle = angle < -90 || angle > 90 ? angle + 180 : angle;
 
                 this.svg.append('text')
@@ -294,13 +369,14 @@ class AntennaSystem {
                     .attr('text-anchor', 'middle')
                     .attr('fill', 'var(--secondary-color)')
                     .attr('transform', `rotate(${adjustedAngle}, ${labelX}, ${labelY})`)
-                    .text(`h${i + 1}: ${coefficients[i].toFixed(2)}`);
+                    .text(`h${i + 1}: ${this.formatComplex(coefficients[i], 2)}`);
 
+                // Position weight labels further to the right
                 this.svg.append('text')
                     .attr('class', 'weight-label')
-                    .attr('x', rightX + antennaSize / 2 + 26)
+                    .attr('x', rightX + antennaSize / 2 + 60) // Increased offset
                     .attr('y', y)
-                    .text(`W${i + 1}: ${weights[i].toFixed(2)}`);
+                    .text(`W${i + 1}: ${this.formatComplex(weights[i], 2)}`);
 
                 this.svg.append('use')
                     .attr('href', '#transmitter')
@@ -315,9 +391,10 @@ class AntennaSystem {
         }
     }
 }
+
+// Ensure the rest of your JS file remains the same
 document.addEventListener('DOMContentLoaded', () => {
     const antennaSystem = new AntennaSystem();
 });
 
 // ------------------------------------------ On startup ----------------------------------------------------------
-
