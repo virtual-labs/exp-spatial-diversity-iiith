@@ -33,17 +33,37 @@ class AntennaSystem {
     // -------------------------------------------------------------------
 
     /**
-     * Formats a complex number or a real number for display.
+     * Formats a complex number or a real number for display in exponential form.
      * @param {object|number} c - The complex number {real, imag} or a real number.
      * @param {number} precision - The number of decimal places.
-     * @returns {string} The formatted string (e.g., "0.123 + j0.456").
+     * @returns {string} The formatted string (e.g., "1.234*e^(j0.567)").
      */
     formatComplex(c, precision = 3) {
         if (typeof c === 'number') {
             return c.toFixed(precision); // Handle real numbers gracefully
         }
-        const sign = c.imag >= 0 ? '+' : '-';
-        return `${c.real.toFixed(precision)} ${sign} j${Math.abs(c.imag).toFixed(precision)}`;
+        
+        // Calculate magnitude and phase
+        const magnitude = Math.sqrt(c.real ** 2 + c.imag ** 2);
+        const phase = Math.atan2(c.imag, c.real);
+        
+        // Special cases
+        if (magnitude === 0) {
+            return '0.000';
+        }
+        
+        if (Math.abs(phase) < 1e-10) {
+            // Pure real positive number
+            return magnitude.toFixed(precision);
+        }
+        
+        if (Math.abs(Math.abs(phase) - Math.PI) < 1e-10) {
+            // Pure real negative number
+            return (-magnitude).toFixed(precision);
+        }
+        
+        // General complex number in exponential form with superscript
+        return `${magnitude.toFixed(precision)}*e<sup>j${phase.toFixed(precision)}</sup>`;
     }
 
     /**
@@ -272,18 +292,23 @@ class AntennaSystem {
         this.setupAntennaSymbols();
 
         const width = 800;
-        const height = Math.max(600, numAntennas * 80 + 100); // Dynamic height based on number of antennas
+        const minHeight = 400; // Minimum height
+        const antennaSpacing = 80; // Space needed per antenna
+        const topBottomPadding = 100; // Padding for top and bottom
+        const height = Math.max(minHeight, numAntennas * antennaSpacing + topBottomPadding);
         
-        // Update SVG height
-        this.svg.attr('height', height);
+        // Update SVG height and viewBox to ensure proper scaling
+        this.svg.attr('height', height)
+                .attr('viewBox', `0 0 ${width} ${height}`)
+                .attr('preserveAspectRatio', 'xMidYMid meet');
         
         const centerX = width / 4;
         const centerY = height / 2;
         const antennaSize = 50;
-        const verticalSpacing = Math.min(70, (height - 100) / Math.max(numAntennas - 1, 1)); // Dynamic spacing
+        const verticalSpacing = Math.min(70, Math.max(50, (height - topBottomPadding) / Math.max(numAntennas - 1, 1)));
         const gap = 20;
 
-        const rightX = width * 0.6; // Moved antennas more to the left to make room for labels
+        const rightX = width * 0.55; // Moved further left to accommodate labels
         const startY = centerY - ((numAntennas - 1) * verticalSpacing) / 2;
 
         if (systemType === 'SIMO') {
@@ -318,14 +343,16 @@ class AntennaSystem {
                     .attr('y', labelY)
                     .attr('text-anchor', 'middle')
                     .attr('fill', 'var(--secondary-color)')
+                    .attr('font-size', '12px')
                     .attr('transform', `rotate(${adjustedAngle}, ${labelX}, ${labelY})`)
                     .text(`h${i + 1}: ${this.formatComplex(coefficients[i], 2)}`);
 
-                // Position weight labels further to the right
+                // Position weight labels with better spacing
                 this.svg.append('text')
                     .attr('class', 'weight-label')
-                    .attr('x', rightX + antennaSize / 2 + 60) // Increased offset
-                    .attr('y', y)
+                    .attr('x', rightX + antennaSize / 2 + 70) // Increased offset
+                    .attr('y', y + 5) // Slight vertical offset for better alignment
+                    .attr('font-size', '12px')
                     .text(`W${i + 1}: ${this.formatComplex(weights[i], 2)}`);
 
                 this.svg.append('use')
@@ -368,14 +395,16 @@ class AntennaSystem {
                     .attr('y', labelY)
                     .attr('text-anchor', 'middle')
                     .attr('fill', 'var(--secondary-color)')
+                    .attr('font-size', '12px')
                     .attr('transform', `rotate(${adjustedAngle}, ${labelX}, ${labelY})`)
                     .text(`h${i + 1}: ${this.formatComplex(coefficients[i], 2)}`);
 
-                // Position weight labels further to the right
+                // Position weight labels with better spacing
                 this.svg.append('text')
                     .attr('class', 'weight-label')
-                    .attr('x', rightX + antennaSize / 2 + 60) // Increased offset
-                    .attr('y', y)
+                    .attr('x', rightX + antennaSize / 2 + 70) // Increased offset
+                    .attr('y', y + 5) // Slight vertical offset for better alignment
+                    .attr('font-size', '12px')
                     .text(`W${i + 1}: ${this.formatComplex(weights[i], 2)}`);
 
                 this.svg.append('use')

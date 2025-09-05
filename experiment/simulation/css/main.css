@@ -338,6 +338,112 @@ button:hover {
     transform-origin: center;
 }
 
+/* Add these CSS rules to your existing CSS file to fix the layout issues */
+
+/* Fix for diagram container height */
+#diagram-container {
+    width: 100%;
+    height: auto; /* Changed from fixed height */
+    min-height: 400px; /* Minimum height */
+    max-height: 800px; /* Maximum height to prevent excessive scrolling */
+    position: relative;
+    overflow: visible; /* Changed from hidden to allow content to be visible */
+    margin: 0 auto;
+}
+
+#diagram {
+    width: 100%;
+    height: auto; /* Allow SVG to scale naturally */
+    display: block;
+}
+
+/* Fix for table container overflow */
+#table-container {
+    width: 100%;
+    overflow-x: auto; /* Allow horizontal scrolling */
+    overflow-y: visible;
+    margin-top: 20px;
+}
+
+#table-container table {
+    min-width: 100%;
+    width: max-content; /* Allow table to expand as needed */
+    white-space: nowrap; /* Prevent text wrapping in cells */
+    font-size: 12px; /* Slightly smaller font for better fit */
+}
+
+#table-container th,
+#table-container td {
+    padding: 6px 8px; /* Reduced padding for more compact layout */
+    text-align: center;
+    vertical-align: middle;
+    min-width: 80px; /* Minimum width for readability */
+}
+
+/* Improve right column to handle table overflow */
+.right-column {
+    flex: 1.2; /* Slightly wider to accommodate table */
+    min-width: 400px; /* Increased minimum width */
+    max-width: none; /* Remove max-width restriction */
+    background-color: #f0f0f0;
+    border: 2px solid #98CB3B;
+    border-radius: 10px;
+    padding: 15px;
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
+}
+
+/* Responsive fixes for smaller screens */
+@media (max-width: 1200px) {
+    .right-column {
+        min-width: 350px;
+    }
+    
+    #table-container th,
+    #table-container td {
+        font-size: 11px;
+        padding: 4px 6px;
+        min-width: 70px;
+    }
+}
+
+@media (max-width: 900px) {
+    .columns-container {
+        flex-direction: column;
+    }
+    
+    .right-column {
+        width: 100%;
+        min-width: 100%;
+    }
+    
+    #table-container {
+        overflow-x: scroll; /* Force horizontal scroll on smaller screens */
+    }
+    
+    #diagram-container {
+        min-height: 350px;
+        max-height: 600px;
+    }
+}
+
+@media (max-width: 480px) {
+    #table-container th,
+    #table-container td {
+        font-size: 10px;
+        padding: 3px 4px;
+        min-width: 60px;
+    }
+    
+    #diagram-container {
+        min-height: 300px;
+        max-height: 500px;
+    }
+    
+    .right-column {
+        padding: 10px;
+    }
+}
+
 /* Responsive breakpoints */
 /* For large desktop screens */
 @media (min-width: 1200px) {
