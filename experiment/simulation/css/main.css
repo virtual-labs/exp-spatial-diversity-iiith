@@ -333,4 +333,30 @@ h3 {
     h3 {
         font-size: 1.1rem;
     }
+<<<<<<< HEAD
+=======
+    
+    select, input {
+        padding: 6px;
+        font-size: 12px;
+    }
+    
+    button {
+        padding: 6px;
+        font-size: 11px;
+    }
+    
+    #diagram-container {
+        height: 200px;
+    }
+    
+    table td, table th {
+        padding: 3px;
+        font-size: 10px;
+    }
+    
+    .left-column, .center-column, .right-column {
+        padding: 8px;
+    }
+>>>>>>> 07d4d015cc5d3998e15ba0bcf8b2e7ac44045db2
 }

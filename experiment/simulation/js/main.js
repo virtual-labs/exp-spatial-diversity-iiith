@@ -431,5 +431,7 @@ class AntennaSystem {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    new AntennaSystem();
+    const antennaSystem = new AntennaSystem();
 });
+
+// ------------------------------------------ On startup ----------------------------------------------------------
