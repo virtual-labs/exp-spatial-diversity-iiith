@@ -261,7 +261,7 @@ class AntennaSystem {
                 <span>${this.linearToDb(combinedSNR_linear).toFixed(2)} dB</span>
             </div>
             <div class="metric-display">
-                <strong>Sum Capacity:</strong>
+                <strong>Capacity:</strong>
                 <span>${sumCapacity.toFixed(2)} bps/Hz</span>
             </div>`;
     }
