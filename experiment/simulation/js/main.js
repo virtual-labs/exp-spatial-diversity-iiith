@@ -57,17 +57,26 @@ class AntennaSystem {
         return { real, imag };
     }
 
+    conjugate(c) {
+        if (typeof c === 'number') return { real: c, imag: 0 };
+        return { real: c.real, imag: -c.imag };
+    }
+
     formatComplexForTable(c, precision = 3) {
         const polar = this.getPolar(c);
-        if (Math.abs(polar.phase) < 1e-9) return polar.magnitude.toFixed(precision);
+        // If the number is real (or very close to it), just show the magnitude.
+        if (Math.abs(c.imag) < 1e-9 || Math.abs(polar.phase) < 1e-9) {
+            return (c.real !== undefined ? c.real : polar.magnitude).toFixed(precision);
+        }
         return `${polar.magnitude.toFixed(precision)}e<sup>j${polar.phase.toFixed(precision)}</sup>`;
     }
 
     _renderComplexWithSuperscript(selection, prefix, c, precision = 2) {
         const polar = this.getPolar(c);
         selection.text(prefix ? `${prefix} ` : '');
-        if (Math.abs(polar.phase) < 1e-9) {
-            selection.append('tspan').text(polar.magnitude.toFixed(precision));
+        // If the number is real, don't show the exponent part.
+        if (Math.abs(c.imag) < 1e-9 || Math.abs(polar.phase) < 1e-9) {
+            selection.append('tspan').text((c.real !== undefined ? c.real : polar.magnitude).toFixed(precision));
             return;
         }
         selection.append('tspan').text(`${polar.magnitude.toFixed(precision)}e`);
@@ -161,47 +170,81 @@ class AntennaSystem {
         });
     }
 
+    // Replace the calculateWeights method with this corrected version:
     calculateWeights(coefficients, method) {
         switch (method) {
-            case 'EGC': 
-                return coefficients.map(() => 1 / coefficients.length);
+            case 'MRC':
+                // For MRC, the weight is the complex conjugate of the channel coefficient.
+                // This co-phases the signal AND weights it by its magnitude.
+                return coefficients.map(h => this.conjugate(h));
+            
+            case 'EGC':
+                // For EGC, the weight is the conjugate of the normalized channel.
+                // This ONLY co-phases the signal, giving each an equal gain of 1.
+                return coefficients.map(h => {
+                    const magnitude = this.getMagnitude(h);
+                    if (magnitude === 0) return { real: 1, imag: 0 }; // Avoid division by zero
+                    // Normalize to get the unit phase vector, then conjugate it.
+                    const normalized = { real: h.real / magnitude, imag: h.imag / magnitude };
+                    return this.conjugate(normalized);
+                });
+
             case 'SC':
+                // For SC, only select the branch with highest gain, apply co-phasing to that branch
                 const magnitudes = coefficients.map(h => this.getMagnitude(h));
                 const maxIndex = magnitudes.indexOf(Math.max(...magnitudes));
-                return coefficients.map((_, i) => (i === maxIndex ? 1 : 0));
-            case 'MRC':
-                const totalPower = coefficients.reduce((sum, h) => sum + this.getMagnitude(h) ** 2, 0);
-                if (totalPower === 0) return coefficients.map(() => 0);
-                return coefficients.map(h => this.getMagnitude(h) ** 2 / totalPower);
+                return coefficients.map((h, i) => {
+                    if (i === maxIndex) {
+                        // Apply co-phasing to the selected branch
+                        const magnitude = this.getMagnitude(h);
+                        if (magnitude === 0) return { real: 1, imag: 0 };
+                        const normalized = { real: h.real / magnitude, imag: h.imag / magnitude };
+                        return this.conjugate(normalized);
+                    } else {
+                        return { real: 0, imag: 0 }; // Zero weight for non-selected branches
+                    }
+                });
+
             default: 
                 throw new Error('Invalid combining method');
         }
     }
 
-    // -------------------------------------------------------------------
-    // SECTION: NEW METRIC CALCULATIONS
-    // -------------------------------------------------------------------
-
+    // Also replace the calculateMetrics method with this corrected version:
     calculateMetrics(coefficients, combiningMethod, Pt_linear, N0_linear) {
         const N = coefficients.length;
-        const channelGains = coefficients.map(h => this.getMagnitude(h) ** 2);
-        const snrs_linear = channelGains.map(gain => Pt_linear * gain / N0_linear);
-
+        const weights = this.calculateWeights(coefficients, combiningMethod);
+        
         let combinedSNR_linear = 0;
+        
         switch (combiningMethod) {
             case 'MRC':
-                combinedSNR_linear = snrs_linear.reduce((sum, snr) => sum + snr, 0);
+                // For MRC: SNR = (Pt/N0) * sum(|h_i|^2)
+                const sumSquaredMagnitudes = coefficients.reduce((sum, h) => 
+                    sum + (this.getMagnitude(h) ** 2), 0);
+                combinedSNR_linear = (Pt_linear / N0_linear) * sumSquaredMagnitudes;
                 break;
+                
             case 'SC':
-                combinedSNR_linear = Math.max(...snrs_linear);
+                // For SC: SNR = (Pt/N0) * max(|h_i|^2)
+                const maxSquaredMagnitude = Math.max(...coefficients.map(h => 
+                    this.getMagnitude(h) ** 2));
+                combinedSNR_linear = (Pt_linear / N0_linear) * maxSquaredMagnitude;
                 break;
+                
             case 'EGC':
-                const signalSum = coefficients.reduce((sum, h) => sum + this.getMagnitude(h), 0);
-                combinedSNR_linear = (Pt_linear / (N * N0_linear)) * (signalSum ** 2);
+                // For EGC: SNR = (Pt/N0) * (sum(|h_i|))^2 / N
+                const sumMagnitudes = coefficients.reduce((sum, h) => 
+                    sum + this.getMagnitude(h), 0);
+                combinedSNR_linear = (Pt_linear / N0_linear) * (sumMagnitudes ** 2) / N;
                 break;
         }
 
+        // Calculate sum capacity (individual branch capacities)
+        const channelGains = coefficients.map(h => this.getMagnitude(h) ** 2);
+        const snrs_linear = channelGains.map(gain => Pt_linear * gain / N0_linear);
         const sumCapacity = snrs_linear.reduce((sum, snr) => sum + Math.log2(1 + snr), 0);
+        
         return { combinedSNR_linear, sumCapacity };
     }
 
@@ -231,8 +274,8 @@ class AntennaSystem {
                     <tr>
                         <th>Antenna</th>
                         <th>Channel (h)</th>
-                        <th>Weight (w)</th>
-                        <th>Gain (h*w)</th>
+                        <th>Co-phasing Weight (w)</th>
+                        <th>Gain after Co-phasing (h*w)</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -294,7 +337,7 @@ class AntennaSystem {
     }
 
     // -------------------------------------------------------------------
-    // SECTION: NEW PERFORMANCE ANALYSIS AND PLOTTING
+    // SECTION: PERFORMANCE ANALYSIS AND PLOTTING
     // -------------------------------------------------------------------
 
     runMonteCarloAndPlot() {
