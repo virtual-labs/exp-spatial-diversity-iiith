@@ -1,5 +1,13 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap');
 
+/* General Styles */
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #2c3644;
+    --background-color: #f8fafc;
+    --border-color: #e2e8f0;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -11,25 +19,12 @@ html {
     scroll-behavior: smooth;
 }
 
-::-webkit-scrollbar {
-    width: 10px;
+section.fre {
+    font-family: 'Poppins', sans-serif;
 }
 
-::-webkit-scrollbar-track {
-    background: #FFFFFF;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #888;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-/* Base styles that apply to all screen sizes */
 .max-width {
-    width: 100%;
+    max-width: 1800px;
     padding: 0 15px;
     margin: auto;
 }
@@ -37,103 +32,31 @@ html {
 section .title {
     position: relative;
     text-align: center;
-    color: #000000;
-    font-size: 28px;
-    font-weight: 500;
-    margin-top: 5%;
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-top: 3%;
+    margin-bottom: 2rem;
     font-family: 'Ubuntu', sans-serif;
 }
 
-.fre {
-    color: #000000;
-    background-size: cover;
-    background-attachment: fixed;
-    font-family: 'Ubuntu', sans-serif;
-}
-
-/* Common Matrix Styles */
-.matrix {
-    border-collapse: collapse;
-    margin: 20px 0;
-    font-family: 'Courier New', Courier, monospace;
-    width: 100%;
-}
-
-.matrix td {
-    border: 1px solid #ccc;
-    padding: 8px 12px;
-    text-align: center;
-}
-
-.matrix tr:nth-child(even) {
-    background-color: #f2f2f2;
-}
-
-.matrix tr:hover {
-    background-color: #e6e6e6;
-}
-
-/* Form and Input Styles */
-.radio-container {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-}
-
-.form {
-    margin-right: 20px;
-    margin-bottom: 10px;
-}
-
-input[type="radio"] {
-    margin-right: 5px;
-}
-
-/* Button Styles */
-.buttonTotal {
-    display: inline-flex;
-    margin-bottom: 20px;
-    font-size: 16px;
-    padding: 10px 20px;
-    background-color: #98CB3B;
-    color: #FFFFFF;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    user-select: none;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-    margin-top: 20px;
-}
-
-.buttonTotal:hover {
-    background-color: #2C9AD1;
-    transform: scale(1.05);
-}
-
-/* Tab Styles */
+/* Tab Layout Styles */
 .tab {
     overflow: hidden;
-    border: 1px solid #FFFFFF;
-    background-color: #FFFFFF;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
     display: flex;
-    flex-wrap: wrap;
 }
 
 .tab button {
     background-color: inherit;
+    flex-grow: 1;
     border: none;
     outline: none;
     cursor: pointer;
-    padding: 12px 16px;
-    font-size: 16px;
+    padding: 14px 16px;
     transition: 0.3s;
-    flex: 1 0 auto;
-    text-align: center;
+    font-size: 17px;
+    font-weight: 500;
 }
 
 .tab button:hover {
@@ -141,48 +64,21 @@ input[type="radio"] {
 }
 
 .tab button.active {
-    background-color: #ccc;
-    border-style: solid;
-    border-radius: 10px;
-    border-color: #98CB3B;
-    color: #176696;
+    background-color: var(--primary-color);
+    color: white;
 }
 
 .tabcontent {
     display: none;
-    padding: 6px 12px;
-    border-top: none;
-}
-
-/* Table Styles */
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 1rem;
-    background-color: aquamarine;
-    margin-bottom: 1rem;
-}
-
-th, td {
+    padding: 20px 12px;
     border: 1px solid #ccc;
-    padding: 8px;
-    text-align: center;
+    border-top: none;
+    animation: fadeEffect 0.8s;
 }
 
-th {
-    background-color: palevioletred;
-    font-weight: 500;
-}
-
-/* Image Styles */
-.expandable-figure {
-    max-width: 100%;
-    cursor: pointer;
-    margin-top: 10%;
-}
-
-.expanded {
-    max-width: none;
+@keyframes fadeEffect {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* Responsive Column Layout */
@@ -196,7 +92,7 @@ th {
 
 .left-column {
     flex: 1;
-    min-width: 180px;
+    min-width: 300px;
     background-color: #f0f0f0;
     border: 2px solid #98CB3B;
     border-radius: 10px;
@@ -205,7 +101,7 @@ th {
 
 .center-column {
     flex: 2;
-  
+    min-width: 400px;
     background-color: #ffffff;
     border: 2px solid #000000;
     border-radius: 10px;
@@ -213,92 +109,33 @@ th {
 }
 
 .right-column {
-    flex: 1;
-    min-width:340px;
+    flex: 1.2;
+    min-width: 340px;
     background-color: #f0f0f0;
     border: 2px solid #98CB3B;
     border-radius: 10px;
     padding: 15px;
 }
 
-/* Root variables and base styles */
-:root{
-    --primary-color: #2563eb;
-    --secondary-color: #2c3644;
-    --background-color: #f8fafc;
-    --border-color: #e2e8f0;
-}
-
-.container {
-    background-color: white;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-
-h1{
-    color: var(--primary-color);
-    margin-bottom: 1.5rem;
-    text-align: center;
-    font-size: 24px;
-}
-
 h3 {
-    font-size: 18px;
+    font-size: 1.2rem;
+    font-weight: 600;
     margin-bottom: 15px;
 }
 
-/* Form styling */
-#system-form {
+/* Form Styles */
+#system-form, #plot-form {
     display: grid;
     gap: 15px;
 }
 
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-label {
-    font-weight: 500;
-    color: var(--secondary-color);
-    font-size: 14px;
-}
-
-select, input {
-    padding: 8px;
-    border: 2px solid var(--border-color);
-    border-radius: 5px;
-    font-size: 14px;
-    width: 100%;
-}
-
-button{
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-    font-size: 14px;
-    width: 100%;
-    margin-top: 10px;
-}
-
-button:hover {
-    background-color: greenyellow;
-    color: black;
-}
-
-/* Diagram container */
+/* Diagram Container */
 #diagram-container {
     width: 100%;
-    height: 300px;
+    height: auto;
+    min-height: 450px;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
     margin: 0 auto;
 }
 
@@ -306,9 +143,10 @@ button:hover {
     width: 100%;
     height: 100%;
     display: block;
+    preserveAspectRatio: xMidYMid meet;
 }
 
-/* Animation */
+/* Diagram Elements */
 .line {
     stroke: var(--secondary-color);
     stroke-width: 2;
@@ -317,288 +155,182 @@ button:hover {
 }
 
 @keyframes dash {
-    to {
-        stroke-dashoffset: -8;
-    }
+    to { stroke-dashoffset: -8; }
 }
 
-.weight-label {
-    font-size: 0.875rem;
-    fill: var(--secondary-color);
-    text-anchor: middle;
+.coefficient-label, .weight-label {
+    font-size: 15px;
+    font-family: 'Open Sans', monospace;
+}
+/* --- Collapsible Instructions Box --- */
+.v-collapsible-instruction-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden; /* This is crucial for the rounded corners */
 }
 
-#error-message {
-    color: #ef4444;
-    margin-top: 0.5rem;
-    display: none;
-}
-
-.antenna-image {
-    transform-origin: center;
-}
-
-/* Add these CSS rules to your existing CSS file to fix the layout issues */
-
-/* Fix for diagram container height */
-#diagram-container {
+.v-collapsible {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    padding: 18px;
     width: 100%;
-    height: auto; /* Changed from fixed height */
-    min-height: 400px; /* Minimum height */
-    max-height: 800px; /* Maximum height to prevent excessive scrolling */
-    position: relative;
-    overflow: visible; /* Changed from hidden to allow content to be visible */
-    margin: 0 auto;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    position: relative; /* Needed for positioning the arrow */
+    transition: background-color 0.2s ease;
 }
 
-#diagram {
-    width: 100%;
-    height: auto; /* Allow SVG to scale naturally */
+.v-collapsible:hover {
+    background-color: #e1e1e1;
+}
+
+/* This creates the little dropdown arrow */
+.v-collapsible::after {
+    content: '▼'; /* Down arrow character */
+    font-size: 0.9em;
+    color: #555;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* When the JS adds the 'is-active' class, flip the arrow */
+.v-collapsible.is-active::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* The content wrapper is hidden by default with zero height */
+.v-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out; /* Smooth animation */
+    background-color: #ffffff;
+}
+
+/* --- Alignment Fix for Instruction List --- */
+
+/* Target the ordered list specifically inside the instructions */
+.v-content-inner ol {
+    /* Resets any strange positioning and aligns the whole list block */
     display: block;
+    text-align: left;
+    
+    /* Adjusts the indentation of the numbers from the left edge */
+    padding-left: 20px; 
+    margin: 0; /* Remove any default margin */
 }
 
-/* Fix for table container overflow */
+/* Target each list item inside the instructions */
+.v-content-inner li {
+    /* Explicitly align the text within each item to the left */
+    text-align: left;
+
+    /* Add some space between the number and the text for readability */
+    padding-left: 5px;
+
+    /* Add some vertical spacing between list items */
+    margin-bottom: 0.75rem; 
+}
+
+/* The inner div holds the padding, so it doesn't mess up the animation */
+.v-content-inner {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #ddd;
+    text-align: left; /* Ensure all content is left-aligned */
+}
+
+/* Target the paragraph inside instructions */
+.v-content-inner p {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+/* Output Section Styles */
+#metrics-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #eef2ff;
+    border-radius: 8px;
+    border: 1px solid #c7d2fe;
+}
+
+.metric-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1em;
+    padding: 5px 0;
+}
+
+.metric-display span {
+    font-weight: bold;
+    color: #4338ca;
+}
+
 #table-container {
     width: 100%;
-    overflow-x: auto; /* Allow horizontal scrolling */
-    overflow-y: visible;
-    margin-top: 20px;
+    overflow-x: auto;
 }
 
 #table-container table {
     min-width: 100%;
-    width: max-content; /* Allow table to expand as needed */
-    white-space: nowrap; /* Prevent text wrapping in cells */
-    font-size: 12px; /* Slightly smaller font for better fit */
+    white-space: nowrap;
+    font-size: 13px;
+    border-collapse: collapse;
 }
 
-#table-container th,
-#table-container td {
-    padding: 6px 8px; /* Reduced padding for more compact layout */
+#table-container th, #table-container td {
+    border: 1px solid #ccc;
+    padding: 8px;
     text-align: center;
     vertical-align: middle;
-    min-width: 80px; /* Minimum width for readability */
 }
 
-/* Improve right column to handle table overflow */
-.right-column {
-    flex: 1.2; /* Slightly wider to accommodate table */
-    min-width: 400px; /* Increased minimum width */
-    max-width: none; /* Remove max-width restriction */
-    background-color: #f0f0f0;
-    border: 2px solid #98CB3B;
-    border-radius: 10px;
-    padding: 15px;
-    overflow-x: auto; /* Allow horizontal scrolling if needed */
+#table-container th {
+    background-color: #e0e0e0;
 }
 
-/* Responsive fixes for smaller screens */
-@media (max-width: 1200px) {
-    .right-column {
-        min-width: 350px;
-    }
-    
-    #table-container th,
-    #table-container td {
-        font-size: 11px;
-        padding: 4px 6px;
-        min-width: 70px;
-    }
+/* Performance Plot Styles */
+#plot-container {
+    width: 100%;
+    min-height: 450px;
 }
 
-@media (max-width: 900px) {
+#pout-plot .axis line,
+#pout-plot .axis path {
+    stroke: #333;
+}
+
+#pout-plot .axis text, #pout-plot .axis-label {
+    font-size: 14px;
+    fill: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
     .columns-container {
         flex-direction: column;
     }
-    
-    .right-column {
+    .left-column, .center-column, .right-column {
         width: 100%;
         min-width: 100%;
     }
-    
-    #table-container {
-        overflow-x: scroll; /* Force horizontal scroll on smaller screens */
-    }
-    
-    #diagram-container {
-        min-height: 350px;
-        max-height: 600px;
+    section .title {
+        font-size: 1.8rem;
     }
 }
 
 @media (max-width: 480px) {
-    #table-container th,
-    #table-container td {
-        font-size: 10px;
-        padding: 3px 4px;
-        min-width: 60px;
-    }
-    
-    #diagram-container {
-        min-height: 300px;
-        max-height: 500px;
-    }
-    
-    .right-column {
-        padding: 10px;
-    }
-}
-
-/* Responsive breakpoints */
-/* For large desktop screens */
-@media (min-width: 1200px) {
-    .max-width {
-        max-width: 1800px;
-    }
-    
-    section .title {
-        font-size: 40px;
-    }
-    
-    .columns-container {
-        flex-direction: row;
-    }
-    
-    #diagram-container {
-        height: 400px;
-    }
-    
-    h3 {
-        font-size: 20px;
-    }
-}
-
-
-
-/* For tablets and large phones */
-@media (max-width: 900px) and (min-width: 481px) {
-    .columns-container {
-        flex-direction: column;
-    }
-    
-    .left-column, .center-column, .right-column {
-        width: 100%;
-    }
-    
-    section .title {
-        font-size: 28px;
-        width: 100%;
-    }
-    
     .tab button {
         font-size: 14px;
-        padding: 10px;
     }
-    
-    #diagram-container {
-        height: 300px;
-    }
-}
-
-/* For small phones */
-@media (max-width: 480px) {
-    .columns-container {
-        flex-direction: column;
-    }
-    
-    .left-column, .center-column, .right-column {
-        width: 100%;
-        min-width: 100%;
-        padding: 10px;
-    }
-    
-    section .title {
-        font-size: 24px;
-        width: 100%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    
-    .tab {
-        flex-direction: column;
-    }
-    
-    .tab button {
-        font-size: 14px;
-        padding: 8px;
-        width: 100%;
-    }
-    
-    h1 {
-        font-size: 20px;
-        margin-bottom: 15px;
-    }
-    
     h3 {
-        font-size: 16px;
-    }
-    
-    table td, table th {
-        padding: 5px;
-        font-size: 12px;
-    }
-    
-    #diagram-container {
-        height: 250px;
-    }
-    
-    .form-group {
-        margin-right: 0;
-    }
-    
-    button {
-        padding: 8px;
-        font-size: 12px;
-    }
-    
-    .v-instruction-title {
-        font-size: 18px;
-    }
-}
-
-/* For very small phones (around 300px width) */
-@media (max-width: 350px) {
-    section .title {
-        font-size: 20px;
-    }
-    
-    .tab button {
-        font-size: 12px;
-        padding: 6px;
-    }
-    
-    h1 {
-        font-size: 18px;
-    }
-    
-    h3 {
-        font-size: 14px;
-    }
-    
-    label {
-        font-size: 12px;
-    }
-    
-    select, input {
-        padding: 6px;
-        font-size: 12px;
-    }
-    
-    button {
-        padding: 6px;
-        font-size: 11px;
-    }
-    
-    #diagram-container {
-        height: 200px;
-    }
-    
-    table td, table th {
-        padding: 3px;
-        font-size: 10px;
-    }
-    
-    .left-column, .center-column, .right-column {
-        padding: 8px;
+        font-size: 1.1rem;
     }
 }

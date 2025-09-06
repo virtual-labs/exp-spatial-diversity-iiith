@@ -2,20 +2,20 @@ function openPart(evt, name) {
     var i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
-      tabcontent[i].style.display = "none";
+        tabcontent[i].style.display = "none";
     }
     tablinks = document.getElementsByClassName("tablinks");
     for (i = 0; i < tablinks.length; i++) {
-      tablinks[i].className = tablinks[i].className.replace(" active", "");
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
     document.getElementById(name).style.display = "block";
     evt.currentTarget.className += " active";
-
 }
 
-function startup()
-{
-    document.getElementById("default").click();
+function startup() {
+    if (document.getElementById("default")) {
+        document.getElementById("default").click();
+    }
 }
 
 window.onload = startup;
@@ -24,406 +24,369 @@ window.onload = startup;
 class AntennaSystem {
     constructor() {
         this.svg = d3.select('#diagram');
+        this.plotSvg = d3.select('#pout-plot');
+        this.coefficients = [];
         this.setupEventListeners();
         this.setupAntennaSymbols();
     }
 
     // -------------------------------------------------------------------
-    // NEW: Helper methods for complex number operations
+    // SECTION: Helper Methods (Complex Numbers, Formatting, etc.)
     // -------------------------------------------------------------------
 
-    /**
-     * Formats a complex number or a real number for display in exponential form.
-     * @param {object|number} c - The complex number {real, imag} or a real number.
-     * @param {number} precision - The number of decimal places.
-     * @returns {string} The formatted string (e.g., "1.234*e^(j0.567)").
-     */
-    formatComplex(c, precision = 3) {
-        if (typeof c === 'number') {
-            return c.toFixed(precision); // Handle real numbers gracefully
-        }
-        
-        // Calculate magnitude and phase
-        const magnitude = Math.sqrt(c.real ** 2 + c.imag ** 2);
-        const phase = Math.atan2(c.imag, c.real);
-        
-        // Special cases
-        if (magnitude === 0) {
-            return '0.000';
-        }
-        
-        if (Math.abs(phase) < 1e-10) {
-            // Pure real positive number
-            return magnitude.toFixed(precision);
-        }
-        
-        if (Math.abs(Math.abs(phase) - Math.PI) < 1e-10) {
-            // Pure real negative number
-            return (-magnitude).toFixed(precision);
-        }
-        
-        // General complex number in exponential form with superscript
-        return `${magnitude.toFixed(precision)}*e<sup>j${phase.toFixed(precision)}</sup>`;
-    }
-
-    /**
-     * Calculates the magnitude of a complex number.
-     * @param {object|number} c - The complex number {real, imag} or a real number.
-     * @returns {number} The magnitude.
-     */
+    dbmToLinear(dbm) { return Math.pow(10, dbm / 10); }
+    linearToDb(linear) { return 10 * Math.log10(linear); }
+    
     getMagnitude(c) {
-        if (typeof c === 'number') {
-            return Math.abs(c);
-        }
+        if (typeof c === 'number') return Math.abs(c);
         return Math.sqrt(c.real ** 2 + c.imag ** 2);
     }
 
-    /**
-     * Multiplies two complex numbers (or a complex and a real number).
-     * @param {object|number} c1
-     * @param {object|number} c2
-     * @returns {object} The resulting complex number {real, imag}.
-     */
+    getPolar(c) {
+        if (typeof c === 'number') return { magnitude: c, phase: c < 0 ? Math.PI : 0 };
+        const magnitude = this.getMagnitude(c);
+        const phase = Math.atan2(c.imag, c.real);
+        return { magnitude, phase };
+    }
+
     multiplyComplex(c1, c2) {
         const val1 = (typeof c1 === 'number') ? { real: c1, imag: 0 } : c1;
         const val2 = (typeof c2 === 'number') ? { real: c2, imag: 0 } : c2;
-
         const real = val1.real * val2.real - val1.imag * val2.imag;
         const imag = val1.real * val2.imag + val1.imag * val2.real;
         return { real, imag };
     }
 
+    formatComplexForTable(c, precision = 3) {
+        const polar = this.getPolar(c);
+        if (Math.abs(polar.phase) < 1e-9) return polar.magnitude.toFixed(precision);
+        return `${polar.magnitude.toFixed(precision)}e<sup>j${polar.phase.toFixed(precision)}</sup>`;
+    }
+
+    _renderComplexWithSuperscript(selection, prefix, c, precision = 2) {
+        const polar = this.getPolar(c);
+        selection.text(prefix ? `${prefix} ` : '');
+        if (Math.abs(polar.phase) < 1e-9) {
+            selection.append('tspan').text(polar.magnitude.toFixed(precision));
+            return;
+        }
+        selection.append('tspan').text(`${polar.magnitude.toFixed(precision)}e`);
+        selection.append('tspan')
+            .attr('dy', '-0.5em').attr('font-size', '0.8em')
+            .text(`j${polar.phase.toFixed(precision)}`);
+    }
+
+
     // -------------------------------------------------------------------
-    // Core class methods (with modifications)
+    // SECTION: Core Simulation Logic & Event Handling
     // -------------------------------------------------------------------
 
     setupAntennaSymbols() {
         const defs = this.svg.append('defs');
-
-        // Transmitter antenna symbol
-        defs.append('symbol')
-            .attr('id', 'transmitter')
-            .attr('viewBox', '0 0 100 100')
-            .append('image')
-            .attr('href', './images/antenna-small.svg')
-            .attr('width', '100')
-            .attr('height', '100');
-
-        // Receiver antenna symbol
-        defs.append('symbol')
-            .attr('id', 'receiver')
-            .attr('viewBox', '0 0 100 100')
-            .append('image')
-            .attr('href', './images/antenna-small.svg')
-            .attr('width', '100')
-            .attr('height', '100');
-
-        // Arrow marker for signal paths
-        defs.append('marker')
-            .attr('id', 'arrowhead')
-            .attr('viewBox', '0 0 10 10')
-            .attr('refX', 10)
-            .attr('refY', 5)
-            .attr('markerWidth', 6)
-            .attr('markerHeight', 6)
-            .attr('orient', 'auto')
-            .append('path')
-            .attr('d', 'M 0 0 L 10 5 L 0 10 Z')
-            .attr('fill', 'var(--secondary-color)');
+        defs.append('symbol').attr('id', 'transmitter').attr('viewBox', '0 0 100 100').append('image').attr('href', './images/antenna-small.svg').attr('width', '100').attr('height', '100');
+        defs.append('symbol').attr('id', 'receiver').attr('viewBox', '0 0 100 100').append('image').attr('href', './images/antenna-small.svg').attr('width', '100').attr('height', '100');
+        defs.append('marker').attr('id', 'arrowhead').attr('viewBox', '0 0 10 10').attr('refX', 10).attr('refY', 5).attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto').append('path').attr('d', 'M 0 0 L 10 5 L 0 10 Z').attr('fill', 'var(--secondary-color)');
     }
 
     setupEventListeners() {
+        // Simulation Tab Listeners
         const generateButton = document.getElementById('generate-diagram');
         const applyDiversityButton = document.getElementById('apply-diversity');
         const resetButton = document.getElementById('reset-experiment');
-        const combiningMethodContainer = document.getElementById('combining-method-container');
-
+        
         generateButton.addEventListener('click', () => {
             this.generateSystemDiagram();
-            if (combiningMethodContainer.style.display === 'block') {
-                generateButton.style.display = 'none';
-                applyDiversityButton.style.display = 'block';
-                resetButton.style.display = 'block';
-            }
+            generateButton.style.display = 'none';
+            applyDiversityButton.style.display = 'block';
+            resetButton.style.display = 'block';
         });
 
         applyDiversityButton.addEventListener('click', () => this.applyDiversity());
-
+        
         resetButton.addEventListener('click', () => {
             this.svg.selectAll('*').remove();
-            combiningMethodContainer.style.display = 'none';
+            this.coefficients = [];
             generateButton.style.display = 'block';
             applyDiversityButton.style.display = 'none';
             resetButton.style.display = 'none';
             document.getElementById('error-message').style.display = 'none';
-            document.getElementById('table-container').style.display = 'none';
+            document.getElementById('table-container').innerHTML = '';
+            document.getElementById('metrics-container').innerHTML = '';
         });
+
+        // Performance Tab Listener
+        document.getElementById('generate-plot-button').addEventListener('click', () => this.runMonteCarloAndPlot());
     }
 
     generateSystemDiagram() {
-        const systemType = document.getElementById('system-type').value;
         const numAntennas = parseInt(document.getElementById('num-antennas').value, 10);
-
-        if (isNaN(numAntennas) || numAntennas < 1 || numAntennas > 10) {
+        if (isNaN(numAntennas) || numAntennas < 1 || numAntennas > 8) {
             const errorMessage = document.getElementById('error-message');
-            errorMessage.textContent = 'Please enter a valid number of antennas (1-10).';
+            errorMessage.textContent = 'Please enter a valid number of antennas (1-8).';
             errorMessage.style.display = 'block';
             return;
         }
-
-        const errorMessage = document.getElementById('error-message');
-        errorMessage.style.display = 'none';
-
-        this.svg.selectAll('*').remove();
-        this.setupAntennaSymbols();
-
-        const coefficients = this.generateRayleighCoefficients(numAntennas);
-        const weights = coefficients.map(() => 1 / numAntennas); // Default real weights
-
-        this.renderDiagram(systemType, numAntennas, coefficients, weights);
-
-        const combiningMethodContainer = document.getElementById('combining-method-container');
-        combiningMethodContainer.style.display = 'block';
-
-        this.displayCoefficients(coefficients, weights);
+        document.getElementById('error-message').style.display = 'none';
+        this.coefficients = this.generateRayleighCoefficients(numAntennas);
+        this.applyDiversity();
     }
 
     applyDiversity() {
+        if (this.coefficients.length === 0) {
+            this.generateSystemDiagram();
+            return;
+        }
+
         const combiningMethod = document.getElementById('combining-method').value;
         const systemType = document.getElementById('system-type').value;
-        const numAntennas = parseInt(document.getElementById('num-antennas').value, 10);
+        const numAntennas = this.coefficients.length;
+        const Pt_dbm = parseFloat(document.getElementById('transmit-power').value);
+        const N0_dbm = parseFloat(document.getElementById('noise-power').value);
 
-        const coefficients = this.generateRayleighCoefficients(numAntennas);
-        const weights = this.calculateWeights(coefficients, combiningMethod);
-
-        this.displayCoefficients(coefficients, weights);
-        this.renderDiagram(systemType, numAntennas, coefficients, weights);
+        const weights = this.calculateWeights(this.coefficients, combiningMethod);
+        const metrics = this.calculateMetrics(this.coefficients, combiningMethod, this.dbmToLinear(Pt_dbm), this.dbmToLinear(N0_dbm));
+        
+        this.displayMetrics(metrics);
+        this.displayCoefficientsTable(this.coefficients, weights);
+        this.renderDiagram(systemType, numAntennas, this.coefficients, weights);
     }
-
-    /**
-     * MODIFIED: Generates complex Rayleigh fading channel coefficients.
-     * Each coefficient is a complex number h = (z1 + j*z2)/sqrt(2),
-     * where z1 and z2 are standard normal random variables.
-     */
+    
     generateRayleighCoefficients(numAntennas) {
         return Array.from({ length: numAntennas }, () => {
-            // Box-Muller transform to get two standard normal random variables (z1, z2)
-            const u1 = Math.random();
-            const u2 = Math.random();
+            const u1 = Math.random(), u2 = Math.random();
             const R = Math.sqrt(-2 * Math.log(u1));
             const theta = 2 * Math.PI * u2;
-            const z1 = R * Math.cos(theta);
-            const z2 = R * Math.sin(theta);
-
-            // Return as a complex object, scaled for unit average power E[|h|^2] = 1
+            const z1 = R * Math.cos(theta), z2 = R * Math.sin(theta);
             return { real: z1 / Math.sqrt(2), imag: z2 / Math.sqrt(2) };
         });
     }
 
-    /**
-     * MODIFIED: Calculates weights - ALL weights are always real numbers.
-     */
     calculateWeights(coefficients, method) {
         switch (method) {
-            case 'EGC':
-                // Equal Gain Combining: Equal real weights
-                const N_egc = coefficients.length;
-                return coefficients.map(() => 1 / N_egc);
-
+            case 'EGC': 
+                return coefficients.map(() => 1 / coefficients.length);
             case 'SC':
-                // Selection Combining: Select the branch with the highest |h|. Weights are real (0 or 1).
                 const magnitudes = coefficients.map(h => this.getMagnitude(h));
                 const maxIndex = magnitudes.indexOf(Math.max(...magnitudes));
                 return coefficients.map((_, i) => (i === maxIndex ? 1 : 0));
-
             case 'MRC':
-                // Maximal-Ratio Combining: Weight is proportional to |h_i|^2 (real-valued weights)
                 const totalPower = coefficients.reduce((sum, h) => sum + this.getMagnitude(h) ** 2, 0);
                 if (totalPower === 0) return coefficients.map(() => 0);
-                return coefficients.map(h => {
-                    const power = this.getMagnitude(h) ** 2;
-                    return power / totalPower;
-                });
-
-            default:
+                return coefficients.map(h => this.getMagnitude(h) ** 2 / totalPower);
+            default: 
                 throw new Error('Invalid combining method');
         }
     }
 
-    /**
-     * MODIFIED: Displays complex coefficients and weights in a table.
-     */
-    displayCoefficients(coefficients, weights) {
-        const container = document.getElementById('table-container');
-        container.style.display = 'block';
+    // -------------------------------------------------------------------
+    // SECTION: NEW METRIC CALCULATIONS
+    // -------------------------------------------------------------------
+
+    calculateMetrics(coefficients, combiningMethod, Pt_linear, N0_linear) {
+        const N = coefficients.length;
+        const channelGains = coefficients.map(h => this.getMagnitude(h) ** 2);
+        const snrs_linear = channelGains.map(gain => Pt_linear * gain / N0_linear);
+
+        let combinedSNR_linear = 0;
+        switch (combiningMethod) {
+            case 'MRC':
+                combinedSNR_linear = snrs_linear.reduce((sum, snr) => sum + snr, 0);
+                break;
+            case 'SC':
+                combinedSNR_linear = Math.max(...snrs_linear);
+                break;
+            case 'EGC':
+                const signalSum = coefficients.reduce((sum, h) => sum + this.getMagnitude(h), 0);
+                combinedSNR_linear = (Pt_linear / (N * N0_linear)) * (signalSum ** 2);
+                break;
+        }
+
+        const sumCapacity = snrs_linear.reduce((sum, snr) => sum + Math.log2(1 + snr), 0);
+        return { combinedSNR_linear, sumCapacity };
+    }
+
+
+    // -------------------------------------------------------------------
+    // SECTION: Display and Rendering
+    // -------------------------------------------------------------------
+
+    displayMetrics({ combinedSNR_linear, sumCapacity }) {
+        const container = document.getElementById('metrics-container');
         container.innerHTML = `
+            <div class="metric-display">
+                <strong>Combined SNR:</strong>
+                <span>${this.linearToDb(combinedSNR_linear).toFixed(2)} dB</span>
+            </div>
+            <div class="metric-display">
+                <strong>Sum Capacity:</strong>
+                <span>${sumCapacity.toFixed(2)} bps/Hz</span>
+            </div>`;
+    }
+
+    displayCoefficientsTable(coefficients, weights) {
+        const container = document.getElementById('table-container');
+        let tableHTML = `
             <table style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr>
-                        <th style="border: 1px solid #ddd; padding: 8px;">Antenna</th>
-                        <th style="border: 1px solid #ddd; padding: 8px;">Channel Coeff. (h)</th>
-                        <th style="border: 1px solid #ddd; padding: 8px;">Weight (w)</th>
-                        <th style="border: 1px solid #ddd; padding: 8px;">Combined Gain |h*w|</th>
+                        <th>Antenna</th>
+                        <th>Channel (h)</th>
+                        <th>Weight (w)</th>
+                        <th>Gain (h*w)</th>
                     </tr>
                 </thead>
-                <tbody>
-                    ${coefficients.map((coeff, i) => {
-                        const weight = weights[i];
-                        const combinedProduct = this.multiplyComplex(coeff, weight);
-                        const gain = this.getMagnitude(combinedProduct);
-                        return `
-                        <tr>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${i + 1}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${this.formatComplex(coeff, 3)}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${this.formatComplex(weight, 3)}</td>
-                            <td style="border: 1px solid #ddd; padding: 8px;">${this.formatComplex(combinedProduct, 3)}</td>
-                        </tr>
-                        `}).join('')}
-                </tbody>
-            </table>
-        `;
-    }
+                <tbody>`;
 
-    /**
-     * MODIFIED: Renders the diagram with improved spacing and layout to prevent antenna cutoff.
-     */
+        coefficients.forEach((coeff, i) => {
+            const weight = weights[i];
+            const combinedProduct = this.multiplyComplex(coeff, weight);
+            tableHTML += `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${this.formatComplexForTable(coeff, 3)}</td>
+                    <td>${this.formatComplexForTable(weight, 3)}</td>
+                    <td>${this.formatComplexForTable(combinedProduct, 3)}</td>
+                </tr>`;
+        });
+        tableHTML += `</tbody></table>`;
+        container.innerHTML = tableHTML;
+    }
+    
     renderDiagram(systemType, numAntennas, coefficients, weights) {
         this.svg.selectAll('*').remove();
         this.setupAntennaSymbols();
 
         const width = 800;
-        const minHeight = 400; // Minimum height
-        const antennaSpacing = 80; // Space needed per antenna
-        const topBottomPadding = 100; // Padding for top and bottom
-        const height = Math.max(minHeight, numAntennas * antennaSpacing + topBottomPadding);
-        
-        // Update SVG height and viewBox to ensure proper scaling
-        this.svg.attr('height', height)
-                .attr('viewBox', `0 0 ${width} ${height}`)
-                .attr('preserveAspectRatio', 'xMidYMid meet');
-        
+        const height = 600;
+        this.svg.attr('viewBox', `0 0 ${width} ${height}`);
+
         const centerX = width / 4;
         const centerY = height / 2;
         const antennaSize = 50;
-        const verticalSpacing = Math.min(70, Math.max(50, (height - topBottomPadding) / Math.max(numAntennas - 1, 1)));
         const gap = 20;
 
-        const rightX = width * 0.55; // Moved further left to accommodate labels
+        const drawableHeight = height - 120;
+        const verticalSpacing = numAntennas > 1 ? drawableHeight / (numAntennas - 1) : 0;
+        const rightX = width * 0.65;
         const startY = centerY - ((numAntennas - 1) * verticalSpacing) / 2;
+        const isSIMO = systemType === 'SIMO';
 
-        if (systemType === 'SIMO') {
-            this.svg.append('use')
-                .attr('href', '#transmitter')
-                .attr('class', 'antenna-image')
-                .attr('x', centerX - antennaSize / 2)
-                .attr('y', centerY - antennaSize / 2)
-                .attr('width', antennaSize)
-                .attr('height', antennaSize);
+        this.svg.append('use').attr('href', isSIMO ? '#transmitter' : '#receiver').attr('class', 'antenna-image').attr('x', centerX - antennaSize / 2).attr('y', centerY - antennaSize / 2).attr('width', antennaSize).attr('height', antennaSize);
 
-            for (let i = 0; i < numAntennas; i++) {
-                const y = startY + i * verticalSpacing;
+        for (let i = 0; i < numAntennas; i++) {
+            const y = startY + i * verticalSpacing;
+            const line = { x1: isSIMO ? centerX + gap : rightX - gap, y1: isSIMO ? centerY : y, x2: isSIMO ? rightX - gap : centerX + gap, y2: isSIMO ? y : centerY };
+            
+            this.svg.append('line').attr('class', 'line').attr('x1', line.x1).attr('y1', line.y1).attr('x2', line.x2).attr('y2', line.y2).attr('marker-end', `url(#arrowhead)`);
+            
+            const labelAngle = Math.atan2(line.y2 - line.y1, line.x2 - line.x1) * (180 / Math.PI);
+            const textAngle = labelAngle > 90 || labelAngle < -90 ? labelAngle + 180 : labelAngle;
+            
+            const hLabel = this.svg.append('text').attr('class', 'coefficient-label').attr('x', (line.x1 + line.x2) / 2).attr('y', (line.y1 + line.y2) / 2 - 8).attr('text-anchor', 'middle').attr('transform', `rotate(${textAngle}, ${(line.x1 + line.x2) / 2}, ${(line.y1 + line.y2) / 2})`);
+            this._renderComplexWithSuperscript(hLabel, `h${i+1}:`, coefficients[i], 2);
 
-                this.svg.append('line')
-                    .attr('class', 'line')
-                    .attr('x1', centerX + gap)
-                    .attr('y1', centerY)
-                    .attr('x2', rightX - gap)
-                    .attr('y2', y)
-                    .attr('marker-end', `url(#arrowhead)`);
-
-                const labelOffset = 3.75;
-                const labelX = (centerX + rightX) / 2;
-                const labelY = (centerY + y) / 2 - labelOffset;
-                const angle = Math.atan2(y - centerY, rightX - centerX) * (180 / Math.PI);
-                const adjustedAngle = angle < -90 || angle > 90 ? angle + 180 : angle;
-
-                this.svg.append('text')
-                    .attr('class', 'coefficient-label')
-                    .attr('x', labelX)
-                    .attr('y', labelY)
-                    .attr('text-anchor', 'middle')
-                    .attr('fill', 'var(--secondary-color)')
-                    .attr('font-size', '12px')
-                    .attr('transform', `rotate(${adjustedAngle}, ${labelX}, ${labelY})`)
-                    .text(`h${i + 1}: ${this.formatComplex(coefficients[i], 2)}`);
-
-                // Position weight labels with better spacing
-                this.svg.append('text')
-                    .attr('class', 'weight-label')
-                    .attr('x', rightX + antennaSize / 2 + 70) // Increased offset
-                    .attr('y', y + 5) // Slight vertical offset for better alignment
-                    .attr('font-size', '12px')
-                    .text(`W${i + 1}: ${this.formatComplex(weights[i], 2)}`);
-
-                this.svg.append('use')
-                    .attr('href', '#receiver')
-                    .attr('class', 'antenna-image')
-                    .attr('x', rightX - antennaSize / 2)
-                    .attr('y', y - antennaSize / 2)
-                    .attr('width', antennaSize)
-                    .attr('height', antennaSize);
-            }
-        } else if (systemType === 'MISO') {
-            this.svg.append('use')
-                .attr('href', '#receiver')
-                .attr('class', 'antenna-image')
-                .attr('x', centerX - antennaSize / 2)
-                .attr('y', centerY - antennaSize / 2)
-                .attr('width', antennaSize)
-                .attr('height', antennaSize);
-
-            for (let i = 0; i < numAntennas; i++) {
-                const y = startY + i * verticalSpacing;
-
-                this.svg.append('line')
-                    .attr('class', 'line')
-                    .attr('x1', rightX - gap)
-                    .attr('y1', y)
-                    .attr('x2', centerX + gap)
-                    .attr('y2', centerY)
-                    .attr('marker-end', `url(#arrowhead)`);
-
-                const labelOffset = 3.75;
-                const labelX = (centerX + rightX) / 2;
-                const labelY = (centerY + y) / 2 - labelOffset;
-                const angle = Math.atan2(centerY - y, centerX - rightX) * (180 / Math.PI);
-                const adjustedAngle = angle < -90 || angle > 90 ? angle + 180 : angle;
-
-                this.svg.append('text')
-                    .attr('class', 'coefficient-label')
-                    .attr('x', labelX)
-                    .attr('y', labelY)
-                    .attr('text-anchor', 'middle')
-                    .attr('fill', 'var(--secondary-color)')
-                    .attr('font-size', '12px')
-                    .attr('transform', `rotate(${adjustedAngle}, ${labelX}, ${labelY})`)
-                    .text(`h${i + 1}: ${this.formatComplex(coefficients[i], 2)}`);
-
-                // Position weight labels with better spacing
-                this.svg.append('text')
-                    .attr('class', 'weight-label')
-                    .attr('x', rightX + antennaSize / 2 + 70) // Increased offset
-                    .attr('y', y + 5) // Slight vertical offset for better alignment
-                    .attr('font-size', '12px')
-                    .text(`W${i + 1}: ${this.formatComplex(weights[i], 2)}`);
-
-                this.svg.append('use')
-                    .attr('href', '#transmitter')
-                    .attr('class', 'antenna-image')
-                    .attr('x', rightX - antennaSize / 2)
-                    .attr('y', y - antennaSize / 2)
-                    .attr('width', antennaSize)
-                    .attr('height', antennaSize);
-            }
-        } else {
-            console.error(`Invalid system type: ${systemType}`);
+            const labelRightX = rightX + antennaSize / 2 + 85;
+            const wLabel = this.svg.append('text').attr('class', 'weight-label').attr('x', labelRightX).attr('y', y);
+            this._renderComplexWithSuperscript(wLabel, `W${i+1}:`, weights[i], 2);
+            
+            this.svg.append('use').attr('href', isSIMO ? '#receiver' : '#transmitter').attr('class', 'antenna-image').attr('x', rightX - antennaSize / 2).attr('y', y - antennaSize / 2).attr('width', antennaSize).attr('height', antennaSize);
         }
+    }
+
+    // -------------------------------------------------------------------
+    // SECTION: NEW PERFORMANCE ANALYSIS AND PLOTTING
+    // -------------------------------------------------------------------
+
+    runMonteCarloAndPlot() {
+        const statusDiv = document.getElementById('plot-status');
+        statusDiv.style.display = 'block';
+        statusDiv.innerHTML = '⚙️ Running simulation... This may take a moment.';
+
+        setTimeout(() => {
+            try {
+                const N = parseInt(document.getElementById('plot-num-antennas').value, 10);
+                const snrThreshold_db = parseFloat(document.getElementById('snr-threshold').value);
+                const numTrials = parseInt(document.getElementById('num-trials').value, 10);
+                
+                if (isNaN(N) || isNaN(snrThreshold_db) || isNaN(numTrials) || N < 1 || numTrials < 1) {
+                    throw new Error("Invalid plot inputs. Please check the values.");
+                }
+
+                const snrThreshold_linear = this.dbmToLinear(snrThreshold_db);
+                const snrDbRange = Array.from({ length: 21 }, (_, i) => i); // 0 to 20 dB
+                
+                const plotData = snrDbRange.map(snrDb => {
+                    const avgSnr_linear = this.dbmToLinear(snrDb);
+                    let outageCounts = { mrc: 0, egc: 0, sc: 0 };
+
+                    for (let i = 0; i < numTrials; i++) {
+                        const h = this.generateRayleighCoefficients(N);
+                        const channelGains = h.map(c => this.getMagnitude(c) ** 2);
+                        const snrs = channelGains.map(g => g * avgSnr_linear);
+                        
+                        const mrcSnr = snrs.reduce((a, b) => a + b, 0);
+                        if (mrcSnr < snrThreshold_linear) outageCounts.mrc++;
+                        
+                        const scSnr = Math.max(...snrs);
+                        if (scSnr < snrThreshold_linear) outageCounts.sc++;
+                        
+                        const egcSignalMag = h.reduce((sum, c) => sum + this.getMagnitude(c), 0);
+                        const egcSnr = (Math.pow(egcSignalMag, 2) / N) * avgSnr_linear;
+                        if (egcSnr < snrThreshold_linear) outageCounts.egc++;
+                    }
+
+                    return {
+                        snr: snrDb,
+                        mrc: outageCounts.mrc / numTrials,
+                        egc: outageCounts.egc / numTrials,
+                        sc: outageCounts.sc / numTrials,
+                    };
+                });
+
+                this.renderPoutPlot(plotData);
+                statusDiv.className = 'alert alert-success mt-3';
+                statusDiv.innerHTML = '✅ Plot generated successfully.';
+            } catch (error) {
+                statusDiv.className = 'alert alert-danger mt-3';
+                statusDiv.innerHTML = `Error: ${error.message}`;
+            }
+        }, 50); // Use setTimeout to allow UI to update before heavy calculation
+    }
+    
+    renderPoutPlot(data) {
+        this.plotSvg.selectAll('*').remove();
+        const container = document.getElementById('plot-container');
+        const margin = { top: 20, right: 100, bottom: 50, left: 70 };
+        const width = container.clientWidth - margin.left - margin.right;
+        const height = 450 - margin.top - margin.bottom;
+
+        const g = this.plotSvg
+            .attr('viewBox', `0 0 ${container.clientWidth} 450`)
+            .append('g')
+            .attr('transform', `translate(${margin.left},${margin.top})`);
+            
+        const x = d3.scaleLinear().domain([0, 20]).range([0, width]);
+        const y = d3.scaleLog().domain([1e-5, 1]).clamp(true).range([height, 0]);
+
+        g.append('g').attr('class', 'axis').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x));
+        g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5, ".0e"));
+        
+        g.append('text').attr('class', 'axis-label').attr('text-anchor', 'middle').attr('x', width / 2).attr('y', height + margin.bottom - 10).text('Average SNR per Branch (dB)');
+        g.append('text').attr('class', 'axis-label').attr('text-anchor', 'middle').attr('transform', 'rotate(-90)').attr('y', -margin.left + 20).attr('x', -height / 2).text('Outage Probability (P_out)');
+        
+        const colors = { mrc: '#d62728', egc: '#2ca02c', sc: '#1f77b4' };
+        const labels = { mrc: 'MRC', egc: 'EGC', sc: 'SC' };
+
+        ['mrc', 'egc', 'sc'].forEach((method, i) => {
+            const line = d3.line().x(d => x(d.snr)).y(d => y(d[method] > 0 ? d[method] : 1e-6));
+            g.append('path').datum(data).attr('fill', 'none').attr('stroke', colors[method]).attr('stroke-width', 2.5).attr('d', line);
+            
+            g.append('circle').attr('cx', width + 20).attr('cy', 20 + i * 25).attr('r', 6).style('fill', colors[method]);
+            g.append('text').attr('x', width + 35).attr('y', 20 + i * 25).text(labels[method]).style('font-size', '15px').attr('alignment-baseline', 'middle');
+        });
     }
 }
 
-// Ensure the rest of your JS file remains the same
 document.addEventListener('DOMContentLoaded', () => {
-    const antennaSystem = new AntennaSystem();
+    new AntennaSystem();
 });
-
-// ------------------------------------------ On startup ----------------------------------------------------------
