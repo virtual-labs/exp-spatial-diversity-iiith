@@ -455,7 +455,6 @@ class AntennaSystem {
             g.append('text').attr('x', width + 35).attr('y', 20 + i * 25).text(labels[method]).style('font-size', '15px').attr('alignment-baseline', 'middle');
         });
     }
-<<<<<<< HEAD
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -463,6 +462,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ------------------------------------------ On startup ----------------------------------------------------------
-=======
-}
->>>>>>> d91dc208ce2cd93d74f3d8ca05c13411c3742294
