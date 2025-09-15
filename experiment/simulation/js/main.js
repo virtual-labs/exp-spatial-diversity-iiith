@@ -1,5 +1,22 @@
-function openPart(evt, name) {
-    var i, tabcontent, tablinks;
+// Wait for the main document to be fully loaded before executing scripts
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the main application class
+    new AntennaSystem();
+
+    // Set up the tab switching functionality
+    const defaultTab = document.getElementById("default");
+    if (defaultTab) {
+        defaultTab.click();
+    }
+});
+
+/**
+ * Handles tab switching for the main interface.
+ * @param {Event} evt - The click event.
+ * @param {string} tabName - The ID of the tab content to show.
+ */
+function openPart(evt, tabName) {
+    let i, tabcontent, tablinks;
     tabcontent = document.getElementsByClassName("tabcontent");
     for (i = 0; i < tabcontent.length; i++) {
         tabcontent[i].style.display = "none";
@@ -8,17 +25,9 @@ function openPart(evt, name) {
     for (i = 0; i < tablinks.length; i++) {
         tablinks[i].className = tablinks[i].className.replace(" active", "");
     }
-    document.getElementById(name).style.display = "block";
+    document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
 }
-
-function startup() {
-    if (document.getElementById("default")) {
-        document.getElementById("default").click();
-    }
-}
-
-window.onload = startup;
 
 
 class AntennaSystem {
@@ -34,7 +43,7 @@ class AntennaSystem {
     // SECTION: Helper Methods (Complex Numbers, Formatting, etc.)
     // -------------------------------------------------------------------
 
-    dbmToLinear(dbm) { return Math.pow(10, dbm / 10); }
+    dbToLinear(db) { return Math.pow(10, db / 10); }
     linearToDb(linear) { return 10 * Math.log10(linear); }
     
     getMagnitude(c) {
@@ -64,25 +73,28 @@ class AntennaSystem {
 
     formatComplexForTable(c, precision = 3) {
         const polar = this.getPolar(c);
-        // If the number is real (or very close to it), just show the magnitude.
-        if (Math.abs(c.imag) < 1e-9 || Math.abs(polar.phase) < 1e-9) {
+        if (Math.abs(c.imag) < 1e-9) {
             return (c.real !== undefined ? c.real : polar.magnitude).toFixed(precision);
         }
-        return `${polar.magnitude.toFixed(precision)}e<sup>j${polar.phase.toFixed(precision)}</sup>`;
+        const mag = polar.magnitude.toFixed(precision);
+        const phase = Math.abs(polar.phase).toFixed(precision);
+        const sign = polar.phase < 0 ? '-' : '';
+        return `${mag}e<sup>${sign}j${phase}</sup>`;
     }
 
     _renderComplexWithSuperscript(selection, prefix, c, precision = 2) {
         const polar = this.getPolar(c);
         selection.text(prefix ? `${prefix} ` : '');
-        // If the number is real, don't show the exponent part.
-        if (Math.abs(c.imag) < 1e-9 || Math.abs(polar.phase) < 1e-9) {
+        if (Math.abs(c.imag) < 1e-9) {
             selection.append('tspan').text((c.real !== undefined ? c.real : polar.magnitude).toFixed(precision));
             return;
         }
         selection.append('tspan').text(`${polar.magnitude.toFixed(precision)}e`);
+        const phaseVal = Math.abs(polar.phase).toFixed(precision);
+        const sign = polar.phase < 0 ? '-' : '';
         selection.append('tspan')
             .attr('dy', '-0.5em').attr('font-size', '0.8em')
-            .text(`j${polar.phase.toFixed(precision)}`);
+            .text(`${sign}j${phaseVal}`);
     }
 
 
@@ -98,20 +110,22 @@ class AntennaSystem {
     }
 
     setupEventListeners() {
-        // Simulation Tab Listeners
         const generateButton = document.getElementById('generate-diagram');
         const applyDiversityButton = document.getElementById('apply-diversity');
         const resetButton = document.getElementById('reset-experiment');
-        
+
+        // Make the "Generate" button call the main update function
         generateButton.addEventListener('click', () => {
-            this.generateSystemDiagram();
+            this.applyDiversity();
             generateButton.style.display = 'none';
             applyDiversityButton.style.display = 'block';
             resetButton.style.display = 'block';
         });
 
+        // The "Apply" button also calls the main update function
         applyDiversityButton.addEventListener('click', () => this.applyDiversity());
-        
+
+        // The reset logic remains the same
         resetButton.addEventListener('click', () => {
             this.svg.selectAll('*').remove();
             this.coefficients = [];
@@ -141,22 +155,32 @@ class AntennaSystem {
     }
 
     applyDiversity() {
-        if (this.coefficients.length === 0) {
-            this.generateSystemDiagram();
+        const numAntennas = parseInt(document.getElementById('num-antennas').value, 10);
+        
+        // Step 1: Validate the number of antennas input
+        if (isNaN(numAntennas) || numAntennas < 1 || numAntennas > 8) {
+            const errorMessage = document.getElementById('error-message');
+            errorMessage.textContent = 'Please enter a valid number of antennas (1-8).';
+            errorMessage.style.display = 'block';
             return;
         }
+        document.getElementById('error-message').style.display = 'none';
 
+        // Step 2: Regenerate channel coefficients if antenna count has changed or if it's the first run
+        if (this.coefficients.length !== numAntennas) {
+            this.coefficients = this.generateRayleighCoefficients(numAntennas);
+        }
+
+        // Step 3: Proceed with all calculations and rendering using the current values from the UI
         const combiningMethod = document.getElementById('combining-method').value;
         const systemType = document.getElementById('system-type').value;
-        const numAntennas = this.coefficients.length;
-        const Pt_dbm = parseFloat(document.getElementById('transmit-power').value);
-        const N0_dbm = parseFloat(document.getElementById('noise-power').value);
+        const avgSnr_db = parseFloat(document.getElementById('avg-snr').value);
 
         const weights = this.calculateWeights(this.coefficients, combiningMethod);
-        const metrics = this.calculateMetrics(this.coefficients, combiningMethod, this.dbmToLinear(Pt_dbm), this.dbmToLinear(N0_dbm));
+        const metrics = this.calculateMetrics(this.coefficients, this.dbToLinear(avgSnr_db));
         
         this.displayMetrics(metrics);
-        this.displayCoefficientsTable(this.coefficients, weights);
+        this.displayCoefficientsTable(this.coefficients, weights, metrics.individualSNRs);
         this.renderDiagram(systemType, numAntennas, this.coefficients, weights);
     }
     
@@ -170,84 +194,63 @@ class AntennaSystem {
         });
     }
 
-    // Replace the calculateWeights method with this corrected version:
     calculateWeights(coefficients, method) {
         switch (method) {
             case 'MRC':
-                // For MRC, the weight is the complex conjugate of the channel coefficient.
-                // This co-phases the signal AND weights it by its magnitude.
                 return coefficients.map(h => this.conjugate(h));
             
             case 'EGC':
-                // For EGC, the weight is the conjugate of the normalized channel.
-                // This ONLY co-phases the signal, giving each an equal gain of 1.
                 return coefficients.map(h => {
                     const magnitude = this.getMagnitude(h);
-                    if (magnitude === 0) return { real: 1, imag: 0 }; // Avoid division by zero
-                    // Normalize to get the unit phase vector, then conjugate it.
+                    if (magnitude < 1e-9) return { real: 1, imag: 0 };
                     const normalized = { real: h.real / magnitude, imag: h.imag / magnitude };
                     return this.conjugate(normalized);
                 });
 
             case 'SC':
-                // For SC, only select the branch with highest gain, apply co-phasing to that branch
                 const magnitudes = coefficients.map(h => this.getMagnitude(h));
                 const maxIndex = magnitudes.indexOf(Math.max(...magnitudes));
                 return coefficients.map((h, i) => {
                     if (i === maxIndex) {
-                        // Apply co-phasing to the selected branch
                         const magnitude = this.getMagnitude(h);
-                        if (magnitude === 0) return { real: 1, imag: 0 };
+                        if (magnitude < 1e-9) return { real: 1, imag: 0 };
                         const normalized = { real: h.real / magnitude, imag: h.imag / magnitude };
                         return this.conjugate(normalized);
                     } else {
-                        return { real: 0, imag: 0 }; // Zero weight for non-selected branches
+                        return { real: 0, imag: 0 };
                     }
                 });
-
             default: 
                 throw new Error('Invalid combining method');
         }
     }
 
-    // Also replace the calculateMetrics method with this corrected version:
-    calculateMetrics(coefficients, combiningMethod, Pt_linear, N0_linear) {
+    calculateMetrics(coefficients, avgSnr_linear) {
         const N = coefficients.length;
-        const weights = this.calculateWeights(coefficients, combiningMethod);
+        const combiningMethod = document.getElementById('combining-method').value;
         
+        const channelGains = coefficients.map(h => this.getMagnitude(h) ** 2);
+        const individualSNRs = channelGains.map(gain => gain * avgSnr_linear);
+
         let combinedSNR_linear = 0;
         
         switch (combiningMethod) {
             case 'MRC':
-                // For MRC: SNR = (Pt/N0) * sum(|h_i|^2)
-                const sumSquaredMagnitudes = coefficients.reduce((sum, h) => 
-                    sum + (this.getMagnitude(h) ** 2), 0);
-                combinedSNR_linear = (Pt_linear / N0_linear) * sumSquaredMagnitudes;
+                combinedSNR_linear = individualSNRs.reduce((sum, snr) => sum + snr, 0);
                 break;
-                
             case 'SC':
-                // For SC: SNR = (Pt/N0) * max(|h_i|^2)
-                const maxSquaredMagnitude = Math.max(...coefficients.map(h => 
-                    this.getMagnitude(h) ** 2));
-                combinedSNR_linear = (Pt_linear / N0_linear) * maxSquaredMagnitude;
+                combinedSNR_linear = Math.max(...individualSNRs);
                 break;
-                
             case 'EGC':
-                // For EGC: SNR = (Pt/N0) * (sum(|h_i|))^2 / N
-                const sumMagnitudes = coefficients.reduce((sum, h) => 
-                    sum + this.getMagnitude(h), 0);
-                combinedSNR_linear = (Pt_linear / N0_linear) * (sumMagnitudes ** 2) / N;
+                const sumMagnitudes = coefficients.reduce((sum, h) => sum + this.getMagnitude(h), 0);
+                combinedSNR_linear = (sumMagnitudes ** 2 / N) * avgSnr_linear;
                 break;
         }
 
-        // Calculate sum capacity (individual branch capacities)
-        const channelGains = coefficients.map(h => this.getMagnitude(h) ** 2);
-        const snrs_linear = channelGains.map(gain => Pt_linear * gain / N0_linear);
-        const sumCapacity = snrs_linear.reduce((sum, snr) => sum + Math.log2(1 + snr), 0);
+        const sumCapacity = individualSNRs.reduce((sum, snr) => sum + Math.log2(1 + snr), 0);
         
-        return { combinedSNR_linear, sumCapacity };
+        return { combinedSNR_linear, sumCapacity, individualSNRs };
     }
-
 
     // -------------------------------------------------------------------
     // SECTION: Display and Rendering
@@ -266,16 +269,19 @@ class AntennaSystem {
             </div>`;
     }
 
-    displayCoefficientsTable(coefficients, weights) {
+    displayCoefficientsTable(coefficients, weights, individualSNRs) {
         const container = document.getElementById('table-container');
+        const combiningMethod = document.getElementById('combining-method').value;
+
         let tableHTML = `
             <table style="width: 100%; border-collapse: collapse;">
                 <thead>
                     <tr>
                         <th>Antenna</th>
                         <th>Channel (h)</th>
-                        <th>Co-phasing Weight (w)</th>
-                        <th>Gain after Co-phasing (h*w)</th>
+                        <th>Branch SNR (dB)</th>
+                        <th>Weight (w)</th>
+                        <th>Combined Gain (h*w)</th>
                     </tr>
                 </thead>
                 <tbody>`;
@@ -283,11 +289,31 @@ class AntennaSystem {
         coefficients.forEach((coeff, i) => {
             const weight = weights[i];
             const combinedProduct = this.multiplyComplex(coeff, weight);
+            const branchSNR_dB = this.linearToDb(individualSNRs[i]);
+            let weightStr;
+
+            // --- MODIFICATION START ---
+            // Special formatting for EGC unit-magnitude weights as requested
+            if (combiningMethod === 'EGC' && Math.abs(this.getMagnitude(weight) - 1.0) < 1e-9) {
+                const polar = this.getPolar(weight);
+                const mag = "1.0"; // Use "1.0" specifically
+                const phase = Math.abs(polar.phase).toFixed(3); // Keep original phase precision
+                const sign = polar.phase < 0 ? '-' : '';
+                weightStr = `${mag}e<sup>${sign}j${phase}</sup>`;
+            } else if (combiningMethod === 'SC' && Math.abs(this.getMagnitude(weight)) < 1e-9) {
+                weightStr = "0.0"; // Cleanly display zero for non-selected branches in SC
+            } else {
+                // Use the general formatting function for all other cases (MRC, etc.)
+                weightStr = this.formatComplexForTable(weight, 3);
+            }
+            // --- MODIFICATION END ---
+
             tableHTML += `
                 <tr>
                     <td>${i + 1}</td>
                     <td>${this.formatComplexForTable(coeff, 3)}</td>
-                    <td>${this.formatComplexForTable(weight, 3)}</td>
+                    <td>${branchSNR_dB.toFixed(2)}</td>
+                    <td>${weightStr}</td>
                     <td>${this.formatComplexForTable(combinedProduct, 3)}</td>
                 </tr>`;
         });
@@ -355,11 +381,11 @@ class AntennaSystem {
                     throw new Error("Invalid plot inputs. Please check the values.");
                 }
 
-                const snrThreshold_linear = this.dbmToLinear(snrThreshold_db);
+                const snrThreshold_linear = this.dbToLinear(snrThreshold_db);
                 const snrDbRange = Array.from({ length: 21 }, (_, i) => i); // 0 to 20 dB
                 
                 const plotData = snrDbRange.map(snrDb => {
-                    const avgSnr_linear = this.dbmToLinear(snrDb);
+                    const avgSnr_linear = this.dbToLinear(snrDb);
                     let outageCounts = { mrc: 0, egc: 0, sc: 0 };
 
                     for (let i = 0; i < numTrials; i++) {
@@ -393,13 +419,13 @@ class AntennaSystem {
                 statusDiv.className = 'alert alert-danger mt-3';
                 statusDiv.innerHTML = `Error: ${error.message}`;
             }
-        }, 50); // Use setTimeout to allow UI to update before heavy calculation
+        }, 50);
     }
     
     renderPoutPlot(data) {
         this.plotSvg.selectAll('*').remove();
         const container = document.getElementById('plot-container');
-        const margin = { top: 20, right: 100, bottom: 50, left: 70 };
+        const margin = { top: 40, right: 100, bottom: 50, left: 70 };
         const width = container.clientWidth - margin.left - margin.right;
         const height = 450 - margin.top - margin.bottom;
 
@@ -414,6 +440,7 @@ class AntennaSystem {
         g.append('g').attr('class', 'axis').attr('transform', `translate(0,${height})`).call(d3.axisBottom(x));
         g.append('g').attr('class', 'axis').call(d3.axisLeft(y).ticks(5, ".0e"));
         
+        g.append('text').attr('class', 'axis-label plot-title').attr('text-anchor', 'middle').attr('x', width / 2).attr('y', -margin.top + 20).text('Outage Probability vs. Average SNR');
         g.append('text').attr('class', 'axis-label').attr('text-anchor', 'middle').attr('x', width / 2).attr('y', height + margin.bottom - 10).text('Average SNR per Branch (dB)');
         g.append('text').attr('class', 'axis-label').attr('text-anchor', 'middle').attr('transform', 'rotate(-90)').attr('y', -margin.left + 20).attr('x', -height / 2).text('Outage Probability (P_out)');
         
@@ -428,6 +455,7 @@ class AntennaSystem {
             g.append('text').attr('x', width + 35).attr('y', 20 + i * 25).text(labels[method]).style('font-size', '15px').attr('alignment-baseline', 'middle');
         });
     }
+<<<<<<< HEAD
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -435,3 +463,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ------------------------------------------ On startup ----------------------------------------------------------
+=======
+}
+>>>>>>> d91dc208ce2cd93d74f3d8ca05c13411c3742294
