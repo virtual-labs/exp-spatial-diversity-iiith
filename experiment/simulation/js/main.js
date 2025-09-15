@@ -456,9 +456,3 @@ class AntennaSystem {
         });
     }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-    const antennaSystem = new AntennaSystem();
-});
-
-// ------------------------------------------ On startup ----------------------------------------------------------
