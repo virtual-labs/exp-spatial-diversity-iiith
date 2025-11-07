@@ -442,8 +442,19 @@ class AntennaSystem {
         
         g.append('text').attr('class', 'axis-label plot-title').attr('text-anchor', 'middle').attr('x', width / 2).attr('y', -margin.top + 20).text('Outage Probability vs. Average SNR');
         g.append('text').attr('class', 'axis-label').attr('text-anchor', 'middle').attr('x', width / 2).attr('y', height + margin.bottom - 10).text('Average SNR per Branch (dB)');
-        g.append('text').attr('class', 'axis-label').attr('text-anchor', 'middle').attr('transform', 'rotate(-90)').attr('y', -margin.left + 20).attr('x', -height / 2).text('Outage Probability (P_out)');
-        
+        const yAxisLabel = g.append('text')
+            .attr('class', 'axis-label')
+            .attr('text-anchor', 'middle')
+            .attr('transform', 'rotate(-90)')
+            .attr('y', -margin.left + 20)
+            .attr('x', -height / 2);
+
+        yAxisLabel.append('tspan').text('Outage Probability (P');
+        yAxisLabel.append('tspan')
+            .attr('baseline-shift', 'sub')
+            .attr('font-size', '0.8em')
+            .text('out');
+        yAxisLabel.append('tspan').text(')');        
         const colors = { mrc: '#d62728', egc: '#2ca02c', sc: '#1f77b4' };
         const labels = { mrc: 'MRC', egc: 'EGC', sc: 'SC' };
 
