@@ -3,3 +3,5 @@
 [2] Wireless Communications by Andrea goldsmith, Draft of second edition. (http://web.stanford.edu/class/ee359/doc/WirelessComm_Chp1-16_March32020.pdf)
 
 [3] Article on spatial diversity. (https://www.sciencedirect.com/topics/engineering/spatial-diversity)
+
+[4] Lecture on spatial diversity. (https://www.cs.princeton.edu/courses/archive/spring18/cos463/lectures/L16-mimo.pdf)
