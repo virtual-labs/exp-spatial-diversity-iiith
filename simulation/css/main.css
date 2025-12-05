@@ -1,0 +1,362 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Ubuntu:wght@400;500;700&display=swap');
+
+
+:root {
+    --primary-color: #2563eb;
+    --secondary-color: #2c3644;
+    --background-color: #f8fafc;
+    --border-color: #e2e8f0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+section.fre {
+    font-family: 'Poppins', sans-serif;
+}
+
+.max-width {
+    max-width: 1800px;
+    padding: 0 15px;
+    margin: auto;
+}
+
+section .title {
+    position: relative;
+    text-align: center;
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-top: 3%;
+    margin-bottom: 2rem;
+    font-family: 'Ubuntu', sans-serif;
+}
+
+/* Tab Layout Styles */
+.tab {
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    display: flex;
+}
+
+.tab button {
+    background-color: inherit;
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+    font-weight: 500;
+}
+
+.tab button:hover {
+    background-color: #ddd;
+}
+
+.tab button.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.tabcontent {
+    display: none;
+    padding: 20px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+    animation: fadeEffect 0.8s;
+}
+
+@keyframes fadeEffect {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive Column Layout */
+.columns-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.left-column {
+    flex: 1;
+    min-width: 300px;
+    background-color: #f0f0f0;
+    border: 2px solid #98CB3B;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.center-column {
+    flex: 2;
+    min-width: 400px;
+    background-color: #ffffff;
+    border: 2px solid #000000;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+.right-column {
+    flex: 1.2;
+    min-width: 340px;
+    background-color: #f0f0f0;
+    border: 2px solid #98CB3B;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+/* Form Styles */
+#system-form, #plot-form {
+    display: grid;
+    gap: 15px;
+}
+
+/* Diagram Container */
+#diagram-container {
+    width: 100%;
+    height: auto;
+    min-height: 450px;
+    position: relative;
+    overflow: visible;
+    margin: 0 auto;
+}
+
+#diagram {
+    width: 100%;
+    height: 100%;
+    display: block;
+    preserveAspectRatio: xMidYMid meet;
+}
+
+/* Diagram Elements */
+.line {
+    stroke: var(--secondary-color);
+    stroke-width: 2;
+    stroke-dasharray: 4;
+    animation: dash 1s linear infinite;
+}
+
+@keyframes dash {
+    to { stroke-dashoffset: -8; }
+}
+
+.coefficient-label, .weight-label {
+    font-size: 15px;
+    font-family: 'Open Sans', monospace;
+}
+/* --- Collapsible Instructions Box --- */
+.v-collapsible-instruction-container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden; /* This is crucial for the rounded corners */
+}
+
+.v-collapsible {
+    background-color: #f1f1f1;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    position: relative; /* Needed for positioning the arrow */
+    transition: background-color 0.2s ease;
+}
+
+.v-collapsible:hover {
+    background-color: #e1e1e1;
+}
+
+/* This creates the little dropdown arrow */
+.v-collapsible::after {
+    content: '▼'; /* Down arrow character */
+    font-size: 0.9em;
+    color: #555;
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* When the JS adds the 'is-active' class, flip the arrow */
+.v-collapsible.is-active::after {
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* The content wrapper is hidden by default with zero height */
+.v-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out; /* Smooth animation */
+    background-color: #ffffff;
+}
+
+/* --- Alignment Fix for Instruction List --- */
+
+/* Target the ordered list specifically inside the instructions */
+.v-content-inner ol {
+    /* Resets any strange positioning and aligns the whole list block */
+    display: block;
+    text-align: left;
+    
+    /* Adjusts the indentation of the numbers from the left edge */
+    padding-left: 20px; 
+    margin: 0; /* Remove any default margin */
+}
+
+/* Target each list item inside the instructions */
+.v-content-inner li {
+    /* Explicitly align the text within each item to the left */
+    text-align: left;
+
+    /* Add some space between the number and the text for readability */
+    padding-left: 5px;
+
+    /* Add some vertical spacing between list items */
+    margin-bottom: 0.75rem; 
+}
+
+/* The inner div holds the padding, so it doesn't mess up the animation */
+.v-content-inner {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #ddd;
+    text-align: left; /* Ensure all content is left-aligned */
+}
+
+/* Target the paragraph inside instructions */
+.v-content-inner p {
+    text-align: left;
+    margin-bottom: 1rem;
+}
+
+/* Output Section Styles */
+#metrics-container {
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #eef2ff;
+    border-radius: 8px;
+    border: 1px solid #c7d2fe;
+}
+
+.metric-display {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.1em;
+    padding: 5px 0;
+}
+
+.metric-display span {
+    font-weight: bold;
+    color: #4338ca;
+}
+
+#table-container {
+    width: 100%;
+    overflow-x: auto;
+}
+
+#table-container table {
+    min-width: 100%;
+    white-space: nowrap;
+    font-size: 13px;
+    border-collapse: collapse;
+}
+
+#table-container th, #table-container td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#table-container th {
+    background-color: #e0e0e0;
+}
+
+/* Performance Plot Styles */
+#plot-container {
+    width: 100%;
+    min-height: 450px;
+}
+
+#pout-plot .axis line,
+#pout-plot .axis path {
+    stroke: #333;
+}
+
+#pout-plot .axis text, #pout-plot .axis-label {
+    font-size: 14px;
+    fill: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .columns-container {
+        flex-direction: column;
+    }
+    .left-column, .center-column, .right-column {
+        width: 100%;
+        min-width: 100%;
+    }
+    section .title {
+        font-size: 1.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .tab button {
+        font-size: 14px;
+    }
+    h3 {
+        font-size: 1.1rem;
+    }
+<<<<<<< HEAD
+=======
+    
+    select, input {
+        padding: 6px;
+        font-size: 12px;
+    }
+    
+    button {
+        padding: 6px;
+        font-size: 11px;
+    }
+    
+    #diagram-container {
+        height: 200px;
+    }
+    
+    table td, table th {
+        padding: 3px;
+        font-size: 10px;
+    }
+    
+    .left-column, .center-column, .right-column {
+        padding: 8px;
+    }
+>>>>>>> 07d4d015cc5d3998e15ba0bcf8b2e7ac44045db2
+}
