@@ -27,16 +27,16 @@
                 <div class="v-collapsible-instruction-container v-instruction-container">
                     <div class="v-collapsible is-size-5">Instructions</div>
                     <div class="v-content">
-						<div class="'v-content-inner" style="text-align: left !important;">
-							<p>Follow these steps to explore the interactive simulation:</p>
-							<ol>
-								<li>Select the <strong>System Type</strong> (SIMO/MISO) and <strong>Number of Antennas</strong>.</li>
-								<li>Enter values for <strong>Transmit Power</strong> and <strong>Noise Power</strong> in dBm.</li>
-								<li>Click <strong>"Generate Channels"</strong> to create a random channel scenario and see the initial diagram and outputs.</li>
-								<li>Select a different <strong>Combining Method</strong> from the dropdown to instantly see how it affects the results for the same channels.</li>
-								<li>Click <strong>"Reset"</strong> to clear the simulation and start over.</li>
-							</ol>
-						</div>
+                        <div class="v-content-inner" style="text-align: left !important;">
+                            <p>Follow these steps to explore the interactive simulation:</p>
+                            <ol>
+                                <li id="sim-step-1">Select the <strong>System Type</strong> (SIMO/MISO) and <strong>Number of Antennas</strong>.</li>
+                                <li id="sim-step-2">Enter values for <strong>Average SNR per Branch</strong> (dB).</li>
+                                <li id="sim-step-3">Click <strong>"Generate Channels"</strong> to create a random channel scenario and see the initial diagram and outputs.</li>
+                                <li id="sim-step-4">Select a different <strong>Combining Method</strong> from the dropdown to instantly see how it affects the results for the same channels.</li>
+                                <li id="sim-step-5">Click <strong>"Reset"</strong> to clear the simulation and start over.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
 
@@ -102,15 +102,15 @@
                 <div class="v-collapsible-instruction-container v-instruction-container">
                     <div class="v-collapsible is-size-5">Instructions</div>
                     <div class="v-content">
-						<div class="v-content-inner" style="text-align: left !important;">
-							<p>Follow these steps to generate the performance plot:</p>
-							<ol>
-								<li>Select the <strong>Number of Antennas (N)</strong> you want to simulate.</li>
-								<li>Set the <strong>SNR Threshold (γ<sub>th</sub>)</strong>. This is the minimum acceptable SNR for a connection to be considered successful (not in "outage").</li>
-								<li>Enter the number of <strong>Monte Carlo Trials</strong>. A higher number gives a smoother, more accurate plot but takes longer to compute.</li>
-								<li>Click <strong>"Generate Plot"</strong> to run the simulation and display the curves.</li>
-							</ol>
-						</div>
+                        <div class="v-content-inner" style="text-align: left !important;">
+                            <p>Follow these steps to generate the performance plot:</p>
+                            <ol>
+                                <li id="perf-step-1">Select the <strong>Number of Antennas (N)</strong> you want to simulate.</li>
+                                <li id="perf-step-2">Set the <strong>SNR Threshold (γ<sub>th</sub>)</strong>. This is the minimum acceptable SNR for a connection to be considered successful.</li>
+                                <li id="perf-step-3">Enter the number of <strong>Monte Carlo Trials</strong>. A higher number gives a smoother, more accurate plot.</li>
+                                <li id="perf-step-4">Click <strong>"Generate Plot"</strong> to run the simulation and display the curves.</li>
+                            </ol>
+                        </div>
                     </div>
                 </div>
 
