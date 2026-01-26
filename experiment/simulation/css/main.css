@@ -216,27 +216,47 @@ h3 {
 
 /* --- Alignment Fix for Instruction List --- */
 
-/* Target the ordered list specifically inside the instructions */
+/* FIND AND REPLACE the existing .v-content-inner ol/li styles with this block */
+
 .v-content-inner ol {
-    /* Resets any strange positioning and aligns the whole list block */
-    display: block;
-    text-align: left;
-    
-    /* Adjusts the indentation of the numbers from the left edge */
-    padding-left: 20px; 
-    margin: 0; /* Remove any default margin */
+    counter-reset: item;
+    list-style-type: none;
+    margin-left: 0;
+    padding-left: 0;
 }
 
-/* Target each list item inside the instructions */
 .v-content-inner li {
-    /* Explicitly align the text within each item to the left */
+    display: block;
+    position: relative;
+    
+    /* Reserve space for the number */
+    padding-left: 35px;
+    
+    margin-bottom: 12px;
+    font-size: clamp(0.9rem, 2vw, 1.0rem);
+    line-height: 1.6;
+    transition: all 0.3s ease;
+    
+    /* Padding for the highlight background */
+    padding-top: 8px;
+    padding-bottom: 8px;
+    padding-right: 8px;
+    border-radius: 4px;
+    border-left: 4px solid transparent;
     text-align: left;
+}
 
-    /* Add some space between the number and the text for readability */
-    padding-left: 5px;
-
-    /* Add some vertical spacing between list items */
-    margin-bottom: 0.75rem; 
+.v-content-inner li::before {
+    content: counter(item) ".";
+    counter-increment: item;
+    
+    /* Position number absolutely within the padding area */
+    position: absolute;
+    left: 10px;
+    top: 8px;
+    
+    font-weight: 700;
+    color: #2563eb; /* Matching primary color */
 }
 
 /* The inner div holds the padding, so it doesn't mess up the animation */
@@ -246,10 +266,18 @@ h3 {
     text-align: left; /* Ensure all content is left-aligned */
 }
 
-/* Target the paragraph inside instructions */
+/* Remove the old specific targeting if it conflicts */
 .v-content-inner p {
-    text-align: left;
     margin-bottom: 1rem;
+}
+
+/* New Active Class */
+.active-instruction {
+    background-color: #eff6ff; /* Light blue background */
+    border-left: 4px solid #2563eb !important; /* Blue accent border */
+    color: #1e40af; /* Dark blue text */
+    font-weight: 500;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
 
 /* Output Section Styles */

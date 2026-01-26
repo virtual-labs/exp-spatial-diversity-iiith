@@ -1,4 +1,5 @@
 // Wait for the main document to be fully loaded before executing scripts
+// MODIFIED: document.addEventListener('DOMContentLoaded', ...)
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize the main application class
     new AntennaSystem();
@@ -6,7 +7,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up the tab switching functionality
     const defaultTab = document.getElementById("default");
     if (defaultTab) {
-        defaultTab.click();
+        defaultTab.click(); // This will trigger openPart and highlight sim-step-1
+    } else {
+        // Fallback if click doesn't work for some reason
+        highlightInstruction('sim-step-1');
     }
 });
 
@@ -27,8 +31,34 @@ function openPart(evt, tabName) {
     }
     document.getElementById(tabName).style.display = "block";
     evt.currentTarget.className += " active";
+
+    // ADDED: Reset instructions based on active tab
+    if (tabName === 'Simulation') {
+        highlightInstruction('sim-step-1');
+    } else {
+        highlightInstruction('perf-step-1');
+    }
 }
 
+// ADDED: Helper function to highlight instructions
+function highlightInstruction(stepId) {
+    // List of all possible steps to clear
+    const allSteps = [
+        'sim-step-1', 'sim-step-2', 'sim-step-3', 'sim-step-4', 'sim-step-5',
+        'perf-step-1', 'perf-step-2', 'perf-step-3', 'perf-step-4'
+    ];
+    
+    allSteps.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) el.classList.remove('active-instruction');
+    });
+
+    // Add active class to target step
+    const target = document.getElementById(stepId);
+    if (target) {
+        target.classList.add('active-instruction');
+    }
+}
 
 class AntennaSystem {
     constructor() {
@@ -116,17 +146,29 @@ class AntennaSystem {
 
         // Make the "Generate" button call the main update function
         generateButton.addEventListener('click', () => {
+            // ADDED: Highlight Step 3 (Action)
+            highlightInstruction('sim-step-3');
+
             this.applyDiversity();
             generateButton.style.display = 'none';
             applyDiversityButton.style.display = 'block';
             resetButton.style.display = 'block';
+
+            // ADDED: Move to Step 4 (Combining Method) after generation
+            setTimeout(() => highlightInstruction('sim-step-4'), 500);
         });
 
         // The "Apply" button also calls the main update function
-        applyDiversityButton.addEventListener('click', () => this.applyDiversity());
+        applyDiversityButton.addEventListener('click', () => {
+             this.applyDiversity();
+             highlightInstruction('sim-step-4');
+        });
 
         // The reset logic remains the same
         resetButton.addEventListener('click', () => {
+            // ADDED: Highlight Step 5 (Reset)
+            highlightInstruction('sim-step-5');
+
             this.svg.selectAll('*').remove();
             this.coefficients = [];
             generateButton.style.display = 'block';
@@ -135,10 +177,44 @@ class AntennaSystem {
             document.getElementById('error-message').style.display = 'none';
             document.getElementById('table-container').innerHTML = '';
             document.getElementById('metrics-container').innerHTML = '';
+
+            // ADDED: Guide back to Step 1
+            setTimeout(() => highlightInstruction('sim-step-1'), 1000);
         });
 
         // Performance Tab Listener
         document.getElementById('generate-plot-button').addEventListener('click', () => this.runMonteCarloAndPlot());
+
+        // ADDED: Input Listeners for Simulation Tab
+        // Step 1: System Config
+        ['system-type', 'num-antennas'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) el.addEventListener('change', () => highlightInstruction('sim-step-1'));
+        });
+
+        // Step 2: SNR
+        const avgSnr = document.getElementById('avg-snr');
+        if(avgSnr) {
+            avgSnr.addEventListener('input', () => highlightInstruction('sim-step-2'));
+            avgSnr.addEventListener('focus', () => highlightInstruction('sim-step-2'));
+        }
+        
+        // Step 4: Combining Method (highlight when user interacts with it)
+        const comboMethod = document.getElementById('combining-method');
+        if(comboMethod) comboMethod.addEventListener('change', () => highlightInstruction('sim-step-4'));
+
+        // ADDED: Input Listeners for Performance Tab
+        // Step 1: Num Antennas
+        const plotAntennas = document.getElementById('plot-num-antennas');
+        if(plotAntennas) plotAntennas.addEventListener('input', () => highlightInstruction('perf-step-1'));
+
+        // Step 2: Threshold
+        const snrThresh = document.getElementById('snr-threshold');
+        if(snrThresh) snrThresh.addEventListener('input', () => highlightInstruction('perf-step-2'));
+
+        // Step 3: Trials
+        const trials = document.getElementById('num-trials');
+        if(trials) trials.addEventListener('change', () => highlightInstruction('perf-step-3'));
     }
 
     generateSystemDiagram() {
