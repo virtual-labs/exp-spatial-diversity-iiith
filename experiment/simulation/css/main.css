@@ -361,8 +361,6 @@ h3 {
     h3 {
         font-size: 1.1rem;
     }
-<<<<<<< HEAD
-=======
     
     select, input {
         padding: 6px;
@@ -386,5 +384,4 @@ h3 {
     .left-column, .center-column, .right-column {
         padding: 8px;
     }
->>>>>>> 07d4d015cc5d3998e15ba0bcf8b2e7ac44045db2
 }
