@@ -102,6 +102,40 @@
       },
       "correctAnswer": "C",
       "difficulty": "intermediate"
+    },
+    {
+      "question": "For a 1x3 SIMO system using Selection Combining, if the probability of a single antenna branch falling below the required SNR threshold is 'p', what is the overall outage probability of the system assuming all branches experience independent fading?",
+      "answers": {
+        "A": "3p",
+        "B": "p/3",
+        "C": "p^3",
+        "D": "1 - (1-p)^3"
+      },
+      "explanations": {
+        "A": "Incorrect. This would imply the probabilities add together, which isn't the case for independent failure events.",
+        "B": "Incorrect. Diversity doesn't simply divide the probability.",
+        "C": "Correct! In Selection Combining with independent branches, a system outage only occurs if ALL branches fall below the threshold simultaneously. Thus, P_outage = p * p * p = p^3.",
+        "D": "Incorrect. This is the probability of at least one branch failing, not all branches failing."
+      },
+      "correctAnswer": "C",
+        "difficulty": "advanced"
+    },
+    {
+      "question": "In a 1x2 SIMO system with independent identical Rayleigh fading channels, if the average SNR on each individual branch is γ, what is the expected average combined SNR using Maximal Ratio Combining (MRC) compared to Selection Combining (SC)?",
+      "answers": {
+        "A": "MRC yields 2γ, while SC yields 1.5γ",
+        "B": "MRC yields 2γ, while SC yields 2γ",
+        "C": "MRC yields γ^2, while SC yields 2γ",
+        "D": "MRC yields 1.5γ, while SC yields 2γ"
+      },
+      "explanations": {
+        "A": "Correct! MRC perfectly sums the SNR of all branches (γ + γ = 2γ). SC selects the best branch, yielding an expected SNR of γ * (1 + 1/2) = 1.5γ.",
+        "B": "Incorrect. SC cannot perfectly sum the SNRs like MRC does.",
+        "C": "Incorrect. SNR scales linearly with the number of branches in MRC, not exponentially.",
+        "D": "Incorrect. MRC always outperforms or equals SC."
+      },
+      "correctAnswer": "A",
+      "difficulty": "advanced"
     }
   ]
 }
