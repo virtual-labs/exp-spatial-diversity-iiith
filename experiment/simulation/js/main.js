@@ -1,5 +1,14 @@
 // Wait for the main document to be fully loaded before executing scripts
 // MODIFIED: document.addEventListener('DOMContentLoaded', ...)
+// Global variables for quantitative metrics
+let lastChannelCoefficients = [];
+let lastNoisePowers = [];
+let lastCombinedSNR = null;
+let lastOutputSNR = null;
+let lastDiversityGain = null;
+let baselineSNR = null;
+
+
 document.addEventListener('DOMContentLoaded', () => {
     // Initialize the main application class
     new AntennaSystem();
@@ -58,6 +67,267 @@ function highlightInstruction(stepId) {
     if (target) {
         target.classList.add('active-instruction');
     }
+}
+
+function displayQuantitativeMetrics() {
+    const metricsContainer = document.getElementById('metrics-container');
+    if (!metricsContainer) return;
+    
+    const combiningMethod = document.getElementById('combining-method').value;
+    const numAntennas = lastChannelCoefficients.length;
+    const avgSNR = parseFloat(document.getElementById('avg-snr').value);
+    
+    // Calculate combining efficiency
+    const avgSNRLinear = Math.pow(10, avgSNR / 10);
+    const channelGains = lastChannelCoefficients.map(h => {
+        const magnitude = Math.sqrt(h.real * h.real + h.imag * h.imag);
+        return magnitude * magnitude;
+    });
+    const theoreticalMRC_SNR = channelGains.reduce((sum, gain) => sum + gain, 0) * avgSNRLinear;
+    const combiningEfficiency = (lastCombinedSNR / theoreticalMRC_SNR) * 100;
+    
+    metricsContainer.innerHTML = `
+        <h4 style="color: #2563eb; margin-bottom: 15px; border-bottom: 2px solid #2563eb; padding-bottom: 8px;">
+            Performance Metrics
+        </h4>
+        
+        <div style="background: #dcfce7; padding: 12px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #16a34a;">
+            <h5 style="color: #166534; margin: 0 0 10px 0; font-size: 0.95rem;">Combined Output Performance</h5>
+            <p style="margin: 6px 0; font-size: 0.9rem;"><strong>Output SNR (γ<sub>out</sub>):</strong> 
+                <span style="color: #16a34a; font-size: 1.1rem; font-weight: 600;">${lastOutputSNR.toFixed(2)} dB</span>
+            </p>
+            <p style="margin: 4px 0; font-size: 0.85rem; color: #666;">
+                Linear: ${lastCombinedSNR.toFixed(4)}
+            </p>
+        </div>
+        
+        <div style="background: #f3e8ff; padding: 12px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #7c3aed;">
+            <h5 style="color: #6b21a8; margin: 0 0 10px 0; font-size: 0.95rem;">Diversity Performance</h5>
+            <p style="margin: 6px 0; font-size: 0.9rem;"><strong>Diversity Gain (G<sub>d</sub>):</strong> 
+                <span style="color: #7c3aed; font-size: 1.1rem; font-weight: 600;">${lastDiversityGain.toFixed(2)} dB</span>
+            </p>
+            <p style="margin: 4px 0; font-size: 0.8rem; color: #666;">
+                Improvement over average single antenna performance
+            </p>
+            <p style="margin: 6px 0; font-size: 0.9rem;"><strong>Combining Efficiency:</strong> ${combiningEfficiency.toFixed(1)}%</p>
+            <p style="margin: 4px 0; font-size: 0.8rem; color: #666;">
+                ${combiningMethod === 'MRC' ? 'MRC achieves 100% efficiency (optimal)' : 
+                  combiningMethod === 'EGC' ? `EGC achieves ${combiningEfficiency.toFixed(1)}% of MRC performance` : 
+                  `SC achieves ${combiningEfficiency.toFixed(1)}% of MRC performance`}
+            </p>
+        </div>
+        
+        <div style="background: #fee2e2; padding: 12px; border-radius: 8px; border-left: 4px solid #dc2626;">
+            <h5 style="color: #991b1b; margin: 0 0 10px 0; font-size: 0.95rem;">Theoretical Analysis</h5>
+            <p style="margin: 4px 0; font-size: 0.85rem;"><strong>Expected BER Improvement:</strong> 
+                ~${Math.pow(10, lastDiversityGain / 10).toFixed(1)}× better than single antenna
+            </p>
+            <p style="margin: 4px 0; font-size: 0.85rem;"><strong>Optimal SNR (MRC with these channels):</strong> 
+                ${(10 * Math.log10(theoreticalMRC_SNR)).toFixed(2)} dB
+            </p>
+            <p style="margin: 4px 0; font-size: 0.85rem;"><strong>SNR Loss from Optimal:</strong> 
+                ${(10 * Math.log10(theoreticalMRC_SNR) - lastOutputSNR).toFixed(2)} dB
+            </p>
+        </div>
+    `;
+}
+
+function addBERFormulas() {
+    const metricsContainer = document.getElementById('metrics-container');
+    const combiningMethod = document.getElementById('combining-method').value;
+    const numAntennas = lastChannelCoefficients.length;
+    
+    const formulas = {
+        'MRC': `P<sub>e</sub> ≈ (1/2)<sup>${numAntennas}</sup> × (1/(1+γ<sub>avg</sub>))<sup>${numAntennas}</sup>`,
+        'EGC': `P<sub>e</sub> ≈ Complex function of N and γ<sub>avg</sub> (sub-optimal)`,
+        'SC': `P<sub>e</sub> ≈ [Q(√(2γ<sub>avg</sub>))]<sup>${numAntennas}</sup>`
+    };
+    
+    const berSection = `
+        <div style="background: #fef9c3; padding: 10px; border-radius: 8px; margin-top: 12px; border-left: 4px solid #eab308;">
+            <h5 style="color: #854d0e; margin: 0 0 8px 0; font-size: 0.9rem;">Theoretical BER Formula</h5>
+            <p style="margin: 4px 0; font-size: 0.85rem;">${formulas[combiningMethod]}</p>
+            <p style="margin: 4px 0; font-size: 0.75rem; color: #666;">
+                For BPSK modulation with ${combiningMethod} and ${numAntennas} antennas
+            </p>
+        </div>
+    `;
+    
+    metricsContainer.innerHTML += berSection;
+}
+
+function displayComparativeAnalysis() {
+    const tableContainer = document.getElementById('table-container');
+    if (!tableContainer || !lastChannelCoefficients.length) return;
+    
+    const avgSNR = parseFloat(document.getElementById('avg-snr').value);
+    const avgSNRLinear = Math.pow(10, avgSNR / 10);
+    const numAntennas = lastChannelCoefficients.length;
+    
+    // Helper function to get magnitude from complex number
+    const getMagnitude = (h) => Math.sqrt(h.real * h.real + h.imag * h.imag);
+    
+    // Calculate SNR for all combining methods
+    const results = {};
+    
+    // MRC
+    const mrcSNR = lastChannelCoefficients.reduce((sum, h) => {
+        const magnitude = getMagnitude(h);
+        return sum + avgSNRLinear * magnitude * magnitude;
+    }, 0);
+    
+    // CORRECTED: Baseline is average SNR, not first branch
+    const baselineSingleAntenna = avgSNRLinear;
+    
+    results.MRC = {
+        snrLinear: mrcSNR,
+        snrDB: 10 * Math.log10(mrcSNR),
+        gain: 10 * Math.log10(mrcSNR / baselineSingleAntenna)
+    };
+    
+    // EGC
+    const sumMagnitudes = lastChannelCoefficients.reduce((sum, h) => sum + getMagnitude(h), 0);
+    const egcSNR = avgSNRLinear * Math.pow(sumMagnitudes, 2) / numAntennas;
+    results.EGC = {
+        snrLinear: egcSNR,
+        snrDB: 10 * Math.log10(egcSNR),
+        gain: 10 * Math.log10(egcSNR / baselineSingleAntenna)
+    };
+    
+    // SC
+    const maxBranchSNR = Math.max(...lastChannelCoefficients.map(h => {
+        const magnitude = getMagnitude(h);
+        return avgSNRLinear * magnitude * magnitude;
+    }));
+    results.SC = {
+        snrLinear: maxBranchSNR,
+        snrDB: 10 * Math.log10(maxBranchSNR),
+        gain: 10 * Math.log10(maxBranchSNR / baselineSingleAntenna)
+    };
+    
+    // Single Antenna (baseline) - CORRECTED
+    results.Single = {
+        snrLinear: baselineSingleAntenna,
+        snrDB: 10 * Math.log10(baselineSingleAntenna),
+        gain: 0
+    };
+    
+    // Determine which method is currently selected
+    const currentMethod = document.getElementById('combining-method').value;
+    const isCurrentMethod = (method) => {
+        const tolerance = 0.01; // Small tolerance for floating point comparison
+        return Math.abs(lastCombinedSNR - results[method].snrLinear) < tolerance;
+    };
+    
+    tableContainer.innerHTML = `
+        <h5 style="color: #1e40af; margin: 15px 0 10px 0; font-size: 0.95rem;">
+            Comparative Performance Analysis
+        </h5>
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; margin-top: 10px;">
+                <thead>
+                    <tr style="background-color: #e0e7ff;">
+                        <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: left;">Method</th>
+                        <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">Output SNR (dB)</th>
+                        <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">Diversity Gain (dB)</th>
+                        <th style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">Relative BER</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="background-color: ${isCurrentMethod('MRC') ? '#dcfce7' : '#fff'};">
+                        <td style="border: 1px solid #cbd5e1; padding: 8px;"><strong>MRC</strong> (Optimal)</td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center; font-weight: 600; color: #16a34a;">
+                            ${results.MRC.snrDB.toFixed(2)}
+                        </td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">
+                            ${results.MRC.gain.toFixed(2)}
+                        </td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">
+                            1.00×
+                        </td>
+                    </tr>
+                    <tr style="background-color: ${isCurrentMethod('EGC') ? '#dcfce7' : '#f8fafc'};">
+                        <td style="border: 1px solid #cbd5e1; padding: 8px;"><strong>EGC</strong> (Sub-optimal)</td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center; font-weight: 600; color: #2563eb;">
+                            ${results.EGC.snrDB.toFixed(2)}
+                        </td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">
+                            ${results.EGC.gain.toFixed(2)}
+                        </td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">
+                            ${(Math.pow(10, (results.MRC.snrDB - results.EGC.snrDB) / 10)).toFixed(2)}×
+                        </td>
+                    </tr>
+                    <tr style="background-color: ${isCurrentMethod('SC') ? '#dcfce7' : '#fff'};">
+                        <td style="border: 1px solid #cbd5e1; padding: 8px;"><strong>SC</strong> (Selection)</td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center; font-weight: 600; color: #7c3aed;">
+                            ${results.SC.snrDB.toFixed(2)}
+                        </td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">
+                            ${results.SC.gain.toFixed(2)}
+                        </td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">
+                            ${(Math.pow(10, (results.MRC.snrDB - results.SC.snrDB) / 10)).toFixed(2)}×
+                        </td>
+                    </tr>
+                    <tr style="background-color: #fef3c7;">
+                        <td style="border: 1px solid #cbd5e1; padding: 8px;"><strong>Single Antenna</strong> (Baseline)</td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center; font-weight: 600; color: #dc2626;">
+                            ${results.Single.snrDB.toFixed(2)}
+                        </td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">
+                            0.00
+                        </td>
+                        <td style="border: 1px solid #cbd5e1; padding: 8px; text-align: center;">
+                            ${(Math.pow(10, (results.MRC.snrDB - results.Single.snrDB) / 10)).toFixed(2)}×
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p style="font-size: 0.75rem; color: #666; margin-top: 8px; font-style: italic;">
+            * Relative BER shows how much worse the error rate is compared to MRC (1.00× = same as MRC, 2× = twice as many errors)
+        </p>
+        <p style="font-size: 0.75rem; color: #666; margin-top: 4px; font-style: italic;">
+            * Currently selected method is highlighted in green
+        </p>
+    `;
+}
+
+function displaySystemConfiguration() {
+    const systemType = document.getElementById('system-type').value;
+    const numAntennas = parseInt(document.getElementById('num-antennas').value, 10);
+    const combiningMethod = document.getElementById('combining-method').value;
+    const avgSNR = parseFloat(document.getElementById('avg-snr').value);
+    
+    const methodNames = {
+        'MRC': 'Maximal Ratio Combining',
+        'EGC': 'Equal Gain Combining',
+        'SC': 'Selection Combining'
+    };
+    
+    // Find the form element and add config display after it
+    const form = document.getElementById('system-form');
+    
+    // Remove existing config display if it exists
+    const existingConfig = document.getElementById('current-config-display');
+    if (existingConfig) {
+        existingConfig.remove();
+    }
+    
+    // Create new config display
+    const configDiv = document.createElement('div');
+    configDiv.id = 'current-config-display';
+    configDiv.innerHTML = `
+        <div style="background: #f0f9ff; padding: 10px; border-radius: 8px; margin-top: 15px; border-left: 4px solid #2563eb;">
+            <h5 style="color: #1e40af; margin: 0 0 8px 0; font-size: 0.9rem;">Current Configuration</h5>
+            <p style="margin: 3px 0; font-size: 0.85rem;"><strong>System:</strong> ${systemType} (${numAntennas} antennas)</p>
+            <p style="margin: 3px 0; font-size: 0.85rem;"><strong>Method:</strong> ${methodNames[combiningMethod]}</p>
+            <p style="margin: 3px 0; font-size: 0.85rem;"><strong>Avg SNR:</strong> ${avgSNR.toFixed(2)} dB</p>
+        </div>
+    `;
+    
+    form.parentNode.insertBefore(configDiv, form.nextSibling);
 }
 
 class AntennaSystem {
@@ -166,7 +436,6 @@ class AntennaSystem {
 
         // The reset logic remains the same
         resetButton.addEventListener('click', () => {
-            // ADDED: Highlight Step 5 (Reset)
             highlightInstruction('sim-step-5');
 
             this.svg.selectAll('*').remove();
@@ -177,13 +446,31 @@ class AntennaSystem {
             document.getElementById('error-message').style.display = 'none';
             document.getElementById('table-container').innerHTML = '';
             document.getElementById('metrics-container').innerHTML = '';
+            
+            // ADD THIS LINE:
+            const existingConfig = document.getElementById('current-config-display');
+            if (existingConfig) existingConfig.remove();
+            
+            lastChannelCoefficients = [];
+            lastNoisePowers = [];
+            lastCombinedSNR = null;
+            lastOutputSNR = null;
+            lastDiversityGain = null;
+            baselineSNR = null;
 
-            // ADDED: Guide back to Step 1
             setTimeout(() => highlightInstruction('sim-step-1'), 1000);
         });
 
         // Performance Tab Listener
         document.getElementById('generate-plot-button').addEventListener('click', () => this.runMonteCarloAndPlot());
+
+        // ADD THIS NEW LISTENER:
+        // Combining Method Change Listener
+        document.getElementById('combining-method').addEventListener('change', () => {
+            if (lastChannelCoefficients.length > 0) {
+                this.applyDiversity();
+            }
+        });
 
         // ADDED: Input Listeners for Simulation Tab
         // Step 1: System Config
@@ -233,7 +520,6 @@ class AntennaSystem {
     applyDiversity() {
         const numAntennas = parseInt(document.getElementById('num-antennas').value, 10);
         
-        // Step 1: Validate the number of antennas input
         if (isNaN(numAntennas) || numAntennas < 1 || numAntennas > 8) {
             const errorMessage = document.getElementById('error-message');
             errorMessage.textContent = 'Please enter a valid number of antennas (1-8).';
@@ -242,12 +528,13 @@ class AntennaSystem {
         }
         document.getElementById('error-message').style.display = 'none';
 
-        // Step 2: Regenerate channel coefficients if antenna count has changed or if it's the first run
+        // Display system configuration in controls
+        displaySystemConfiguration();
+
         if (this.coefficients.length !== numAntennas) {
             this.coefficients = this.generateRayleighCoefficients(numAntennas);
         }
 
-        // Step 3: Proceed with all calculations and rendering using the current values from the UI
         const combiningMethod = document.getElementById('combining-method').value;
         const systemType = document.getElementById('system-type').value;
         const avgSnr_db = parseFloat(document.getElementById('avg-snr').value);
@@ -255,8 +542,12 @@ class AntennaSystem {
         const weights = this.calculateWeights(this.coefficients, combiningMethod);
         const metrics = this.calculateMetrics(this.coefficients, this.dbToLinear(avgSnr_db));
         
-        this.displayMetrics(metrics);
+        // CHANGED ORDER: Table first, then metrics, then comparison
         this.displayCoefficientsTable(this.coefficients, weights, metrics.individualSNRs);
+        displayQuantitativeMetrics();
+        displayComparativeAnalysis();
+        addBERFormulas();
+        
         this.renderDiagram(systemType, numAntennas, this.coefficients, weights);
     }
     
@@ -324,6 +615,18 @@ class AntennaSystem {
         }
 
         const sumCapacity = individualSNRs.reduce((sum, snr) => sum + Math.log2(1 + snr), 0);
+        
+        // CORRECTED: Store baseline SNR - should be average SNR, not first branch
+        // Baseline represents what a single antenna would get on average
+        baselineSNR = avgSnr_linear;  // CHANGED: Use average SNR as baseline
+
+        // Calculate diversity gain compared to average single antenna performance
+        lastDiversityGain = 10 * Math.log10(combinedSNR_linear / baselineSNR);
+
+        // Store values for display
+        lastChannelCoefficients = coefficients;
+        lastCombinedSNR = combinedSNR_linear;
+        lastOutputSNR = 10 * Math.log10(combinedSNR_linear);
         
         return { combinedSNR_linear, sumCapacity, individualSNRs };
     }
