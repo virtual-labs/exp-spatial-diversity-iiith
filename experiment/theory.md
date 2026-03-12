@@ -100,13 +100,6 @@ Equal gain combining co-phases the signals across different branches i.e. $w_i=e
 
 
 $$
-   \mathbf{y} = \left(\sum_{i=1}^{N_r}\mathbf{h}_i\right)w\mathbf{x}.
-$$
-
-
-The array gain for this technique is given as
-
-$$
 \begin{aligned}
    \mathbf{y} = \left(\sum_{i=1}^{N_r}\mathbf{h}_i w_i \right)\mathbf{x}
 \end{aligned}
