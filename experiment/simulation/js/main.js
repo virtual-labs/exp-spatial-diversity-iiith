@@ -107,7 +107,7 @@ function displayQuantitativeMetrics() {
                 <span style="color: #7c3aed; font-size: 1.1rem; font-weight: 600;">${lastDiversityGain.toFixed(2)} dB</span>
             </p>
             <p style="margin: 4px 0; font-size: 0.8rem; color: #666;">
-                Improvement over average single antenna performance
+                Improvement over a single reference antenna (Antenna 1)
             </p>
             <p style="margin: 6px 0; font-size: 0.9rem;"><strong>Combining Efficiency:</strong> ${combiningEfficiency.toFixed(1)}%</p>
             <p style="margin: 4px 0; font-size: 0.8rem; color: #666;">
@@ -176,8 +176,8 @@ function displayComparativeAnalysis() {
         return sum + avgSNRLinear * magnitude * magnitude;
     }, 0);
     
-    // CORRECTED: Baseline is average SNR, not first branch
-    const baselineSingleAntenna = avgSNRLinear;
+    // FIX: Baseline is the instantaneous SNR of Antenna 1
+    const baselineSingleAntenna = avgSNRLinear * Math.pow(getMagnitude(lastChannelCoefficients[0]), 2);
     
     results.MRC = {
         snrLinear: mrcSNR,
@@ -616,11 +616,12 @@ class AntennaSystem {
 
         const sumCapacity = individualSNRs.reduce((sum, snr) => sum + Math.log2(1 + snr), 0);
         
-        // CORRECTED: Store baseline SNR - should be average SNR, not first branch
-        // Baseline represents what a single antenna would get on average
-        baselineSNR = avgSnr_linear;  // CHANGED: Use average SNR as baseline
+        // CORRECTED FIX: Use the instantaneous SNR of Antenna 1 as the baseline
+        // This ensures the gain compares the array against a single physical antenna
+        // in the exact same fading realization, guaranteeing >= 0 dB gain for MRC.
+        baselineSNR = individualSNRs[0];  
 
-        // Calculate diversity gain compared to average single antenna performance
+        // Calculate diversity gain compared to Antenna 1
         lastDiversityGain = 10 * Math.log10(combinedSNR_linear / baselineSNR);
 
         // Store values for display
