@@ -1,0 +1,19 @@
+
+/home/runner/work/exp-spatial-diversity-iiith/exp-spatial-diversity-iiith/experiment/simulation/js/main.js
+    5:5   warning  'lastNoisePowers' is assigned a value but never used  no-unused-vars
+   31:10  warning  'openPart' is defined but never used                  no-unused-vars
+   77:11  warning  'numAntennas' is assigned a value but never used      no-unused-vars
+  216:11  warning  'currentMethod' is assigned a value but never used    no-unused-vars
+  335:20  warning  'd3' is not defined                                   no-undef
+  336:24  warning  'd3' is not defined                                   no-undef
+  578:17  warning  Unexpected lexical declaration in case block          no-case-declarations
+  579:17  warning  Unexpected lexical declaration in case block          no-case-declarations
+  612:17  warning  Unexpected lexical declaration in case block          no-case-declarations
+  817:19  warning  'd3' is not defined                                   no-undef
+  818:19  warning  'd3' is not defined                                   no-undef
+  820:94  warning  'd3' is not defined                                   no-undef
+  821:50  warning  'd3' is not defined                                   no-undef
+  842:26  warning  'd3' is not defined                                   no-undef
+
+✖ 14 problems (0 errors, 14 warnings)
+
